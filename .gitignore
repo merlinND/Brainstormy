@@ -33,5 +33,7 @@ nosetests.xml
 .mr.developer.cfg
 .project
 .pydevproject
-/vadim_metadata/nbproject/private/
-/vadim_metadata/
+
+
+# SASS
+.sass-cache*

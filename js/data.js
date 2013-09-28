@@ -1,80 +1,70 @@
+/*
+ * STRUCTURES DE DONNEES
+ */
+
+// GRAPHES
+var GraphFactory = {
+	// Création d'un nouveau graphe vide
+	create: function() {
+		return {
+			nodes: [],
+
+			// Méthode : ajout d'un noeud au graphe
+			addNode: function(node) {
+				// Le noeud est enregistré à l'index correspondant à son id
+				this.nodes[node.id] = node;
+
+				// Pour pouvoir faire des appels chaînés (à la jQuery)
+				return this;
+			}
+		};
+	}
+};
+
+// NOEUDS ET ARRETES
+var NodeFactory = {
+	// Création d'un nouveau noeud vide
+	create: function(newId, newWord, newEdges) {
+		if (newEdges === undefined)
+			newEdges = [];
+
+		return {
+			id: newId,
+			word: newWord,
+			edges: newEdges,
+
+			// Méthode : ajouter une nouvelle arrête au noeud
+			addEdge: function(whereTo, newRelevance) {
+				this.edges.push({
+					to: whereTo,
+					relevance: newRelevance
+				});
+
+				// Pour pouvoir faire des appels chaînés (à la jQuery)
+				return this;
+			}
+		};
+	}
+};
+
+
 (function($){
 	
-	$(document).ready(function(){
-		init();
-		goThroughGraph(getSampleGraph());
-	});
-
-	function init(){
-		console.log("Unicorns!");
-	}
-
-	function getSampleGraph(){
-		var nodes = [
-			{
-				id: 1,
-				word: "pet",
-				edges: [
-					{ to: 2, relevance: 1 },
-					{ to: 3, relevance: 0.8 },
-					{ to: 4, relevance: 0.4 }
-				]
-			},
-			{
-				id: 2,
-				word: "cat",
-				edges: [
-					{ to: 5, relevance: 0.8 },
-					{ to: 6, relevance: 0.7 },
-					{ to: 7, relevance: 1 }
-				]
-			},
-			{
-				id: 3,
-				word: "dog",
-				edges: [
-				]
-			},
-			{
-				id: 4,
-				word: "snake",
-				edges: [
-				]
-			},
-			{
-				id: 5,
-				word: "fur",
-				edges: [
-				]
-			},
-			{
-				id: 6,
-				word: "fluffy",
-				edges: [
-				]
-			},
-			{
-				id: 7,
-				word: "cute",
-				edges: [
-				]
-			}
-		];
-
-		return nodes;
-	}
-
+	/*
+	 * PARCOURS DU GRAPHE
+	 */
 	function goThroughGraph(graph){
-		if (graph.length > 0)
-			buildGraph(graph[0], graph, 0);
+		var nodes = graph.nodes;
+
+		if (nodes.length > 0)
+			displayGraphFromNode(nodes[0], nodes, 0);
 		else
 			console.log("Le graphe passé est vide.");
 	}
-
-	function buildGraph(currentNode, graph, depth){
+	function displayGraphFromNode(currentNode, nodes, depth){
 		// On affiche le noeud en cours
 		if (currentNode.position === undefined){
-			displayNode(currentNode, graph, depth);
+			displayNode(currentNode, nodes, depth);
 		}
 
 		// Pour chaque arrête partant de ce noeud
@@ -82,17 +72,20 @@
 			var edge = currentNode.edges[j];
 
 			// On récupère l'objet node qui représente la cible de cette connexion
-			// TODO : vraie fonction de recherche
-			var targetNode = graph[edge.to-1];
+			var targetNode = nodes[edge.to];
 			// On affiche récursivement la suite du graphe à partir de cette cible
-			buildGraph(targetNode, graph, depth+1);
+			displayGraphFromNode(targetNode, nodes, depth+1);
 
 			// Et on dessine le lien entre le noeud courant et la cible
 			// TODO
 		}
 	}
 
-	function computeCoordinatesForNode(node, graph, depth){
+	/*
+	 * AFFICHAGE
+	 * (à déplacer dans un module à part)
+	 */
+	function computeCoordinatesForNode(node, nodes, depth){
 		return { lat: Math.random(), lng: Math.random() };
 	}
 
@@ -103,11 +96,39 @@
 		}
 		representation += node.word;
 
-		// On enregistre les coordonnées à laquelles le noeud a été affiché
+		// On enregistre les coordonnées auxquelles le noeud a été affiché
 		node.position = computeCoordinatesForNode(node, graph, depth);
 
 		$("#dump").text($("#dump").text() + "\n" + representation);
-		console.log("Mot courant : " + node.word);
+	}
+
+	/*
+	 * TEST DES STRUCTURES DE DONNEES
+	 */
+	$(document).ready(function(){
+		init();
+		goThroughGraph(createSampleGraph());
+	});
+
+	function init(){
+		console.log(">> Unicorns!");
+	}
+
+	function createSampleGraph(){
+		var graph = GraphFactory.create();
+
+		graph.addNode(NodeFactory.create(0, "pet").addEdge(1, 1).addEdge(2, 0.8).addEdge(3, 0.3))
+			.addNode(NodeFactory.create(1, "cat").addEdge(4, 0.7).addEdge(5, 0.5).addEdge(6, 0.9))
+			.addNode(NodeFactory.create(2, "dog"))
+			.addNode(NodeFactory.create(3, "snake"))
+			.addNode(NodeFactory.create(4, "fur"))
+			.addNode(NodeFactory.create(5, "fluffy"))
+			.addNode(NodeFactory.create(6, "cute").addEdge(41, 0.5).addEdge(42, 1))
+			.addNode(NodeFactory.create(41, "baby"))
+			.addNode(NodeFactory.create(42, "unicorn"));
+
+		return graph;
 	}
 
 })(jQuery);
+

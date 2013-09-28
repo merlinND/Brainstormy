@@ -10,6 +10,12 @@
     <!-- Script included -->
 	<script type="text/javascript" src="js/jquery.js"></script>
 	<script type="text/javascript" src="js/data.js"></script>
+
+	<link href="stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css" />
+	<link href="stylesheets/print.css" media="print" rel="stylesheet" type="text/css" />
+	<!--[if IE]>
+		<link href="stylesheets/ie.css" media="screen, projection" rel="stylesheet" type="text/css" />
+	<![endif]-->
     
     <script type="text/javascript" src="v3_eshapes.js"></script>
     <script type="text/javascript" src="js/maps.js"></script>
@@ -24,7 +30,11 @@
 <body>
 	<h1>Brainstormy</h1>
 
-	<pre id="dump">
+	<pre id="dump"></pre>
+
+	<form action="#startingPoint">
+		<input type="text" name="word" id="startingPoint" class="word" placeholder="ideate">
+	</form>
 
 	</pre>
     
