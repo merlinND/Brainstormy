@@ -45,9 +45,10 @@
         var destination = new google.maps.LatLng(Math.random() / 500 - 0.0005, Math.random() / 500 - 0.0005);
         animateCircleTo(centerCircle, destination);
         
-        drawNode(myLatlng, 20, 'Hello', '#e74c3c', map);
-
         drawCirclesAround(8, myLatlng, 0.001, 20, '#d35400', map);
+        
+        // Node de test
+        drawNode(myLatlng, 20, 'Hello', '#e74c3c', map);
     }
 
     
