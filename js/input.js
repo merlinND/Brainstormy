@@ -8,25 +8,40 @@ $.QUERY_URL = "query";
 	});
 
 	function init(){
-		$("#startingPoint").focus();
-		$("#startingPoint").parent("form").on("submit", startSubmit);
-
 		console.log(">> Input ready");
 
-		// Test d'une requête vers le serveur
-		var testNode = NodeFactory.create(0, "cat");
-		//queryServer(testNode);
+		// TOOD : pendant les tests, on ne déclanche l'affichage du
+		// input que lors d'un clic sur le <h1>
+		$("header h1, form").on("click", function(e){
+			e.stopPropagation();
+
+			if (e.target.nodeName != "INPUT")
+				toggleInputForm();
+		});
+		$("#startingPoint").parent("form").on("submit", startSubmit);
 	}
 
 })(jQuery);
+
+function toggleInputForm() {
+	if ($("form").is(":visible"))
+		$("form").fadeOut();
+	else {
+		$("#startingPoint").val("");
+		$("form").fadeIn();
+		$("#startingPoint").focus();
+	}
+}
 
 function startSubmit(e) {
 	e.preventDefault();
 	$(e.target).fadeOut();
 	
 	// A partir du mot donné, on crée le noeud initial
-	var firstNode = NodeFactory.create(0, $("#startingPoint").val());
-	
+	// TODO : choisir intelligemment un id
+	var word = $("#startingPoint").val(),
+		firstNode = NodeFactory.create(0, word);
+	console.log(word);
 	// On interroge le serveur pour obtenir les noeuds correspondants
 	queryServer(firstNode);
 	

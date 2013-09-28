@@ -110,8 +110,6 @@ var flatColorsNum = ["#1abc9c","#2ecc71","#3498db","#9b59b6","#34495e","#16a085"
             radius: rad
         };
 
-        console.log("On affiche un cercle à la position " + center);
-
         return new google.maps.Circle(CircleOptions);
     }
     
@@ -157,8 +155,6 @@ var flatColorsNum = ["#1abc9c","#2ecc71","#3498db","#9b59b6","#34495e","#16a085"
         var maxAngle = (3/2) * Math.PI,
             ancestorOffset = Math.PI - getHeading(ancestorPosition, center),
             angularOffset = ((2*Math.PI) - maxAngle) / 2 - ancestorOffset;
-
-        console.log("Le heading de " + ancestorPosition + " à " + center + " est de " + (ancestorOffset / Math.PI) + " pi");
 
         // On va décrire un grand cercle,
         // et placer les marqueurs à intervalle régulier
