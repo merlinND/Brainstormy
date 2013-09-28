@@ -120,12 +120,32 @@ body .success {
 /* ************* */
 /*    THE MAP    */
 /* line 94, ../sass/screen.scss */
+#map-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  z-index: 10;
+}
+
+/* line 100, ../sass/screen.scss */
 #dump {
+  display: block;
+  position: absolute;
+  top: 25px;
+  right: 5px;
+  z-index: 100;
   padding: 25px;
   background-color: #c0392b;
+  opacity: 0.2;
+}
+/* line 111, ../sass/screen.scss */
+#dump:hover {
+  opacity: 1;
 }
 @media (max-width: 500px) {
-  /* line 94, ../sass/screen.scss */
+  /* line 100, ../sass/screen.scss */
   #dump {
     background-color: #e74c3c;
   }
@@ -133,7 +153,7 @@ body .success {
 
 /* ************* */
 /*   USER INPUT  */
-/* line 107, ../sass/screen.scss */
+/* line 124, ../sass/screen.scss */
 form {
   position: absolute;
   top: 0;
@@ -143,7 +163,7 @@ form {
   z-index: 500;
   background-color: rgba(0, 0, 0, 0.2);
 }
-/* line 114, ../sass/screen.scss */
+/* line 131, ../sass/screen.scss */
 form input.word {
   display: block;
   width: 60%;
