@@ -73,10 +73,12 @@ var flatColorsNum = ["#1abc9c","#2ecc71","#3498db","#9b59b6","#34495e","#16a085"
     /******* ZONE DE TEST **/
         var centerCircle = drawCircle(myLatlng, 20, '#3498db', map);
         // Test d'animation du cercle central
-        var destination = new google.maps.LatLng(Math.random() / 500 - 0.0005, Math.random() / 500 - 0.0005);
-        animateCircleTo(centerCircle, destination);
+        //var centerCircle = drawCircle(myLatlng, 20, '#3498db', map);
+        //var destination = new google.maps.LatLng(Math.random() / 500 - 0.0005, Math.random() / 500 - 0.0005);
+        //animateCircleTo(centerCircle, destination);
         
-        drawCirclesAround(8, myLatlng, 0.001, 20, '#d35400', map);
+        var ancestorPosition = new google.maps.LatLng(0.001, 0.001);
+        drawCirclesAround(8, myLatlng, 0.001, ancestorPosition, 20, '#d35400', map);
         
         // Node de test
         
@@ -107,6 +109,9 @@ var flatColorsNum = ["#1abc9c","#2ecc71","#3498db","#9b59b6","#34495e","#16a085"
             center: center,
             radius: rad
         };
+
+        console.log("On affiche un cercle à la position " + center);
+
         return new google.maps.Circle(CircleOptions);
     }
     
@@ -147,10 +152,13 @@ var flatColorsNum = ["#1abc9c","#2ecc71","#3498db","#9b59b6","#34495e","#16a085"
         }
     
 
-    function drawCirclesAround(numberOfCircles, center, globalRadius, circleRadius, circleColor, map) {
+    function drawCirclesAround(numberOfCircles, center, globalRadius, ancestorPosition, circleRadius, circleColor, map) {
 
         var maxAngle = (3/2) * Math.PI,
-            angularOffset = ((2*Math.PI) - maxAngle) / 2 - Math.PI / 2;
+            ancestorOffset = Math.PI - getHeading(ancestorPosition, center),
+            angularOffset = ((2*Math.PI) - maxAngle) / 2 - ancestorOffset;
+
+        console.log("Le heading de " + ancestorPosition + " à " + center + " est de " + (ancestorOffset / Math.PI) + " pi");
 
         // On va décrire un grand cercle,
         // et placer les marqueurs à intervalle régulier
@@ -218,21 +226,49 @@ var flatColorsNum = ["#1abc9c","#2ecc71","#3498db","#9b59b6","#34495e","#16a085"
         circle.setCenter(position);
     }
 
-    function arePositionsEquivalent(position1, position2, epsilon) {
-        if (epsilon === undefined)
-            // TODO : ajuster cette valeur d'acceptation
-            epsilon = 0.0000001;
-
-        if (Math.abs(position1.lat() - position2.lat()) > epsilon)
-            return false;
-        else if (Math.abs(position1.lng() - position2.lng()) > epsilon)
-            return false;
-        else
-            return true;
-    }
-    
-    function _(a,b) {
-        return new google.maps.LatLng(a,b);
-    }
-
 })(jQuery);
+
+
+/**
+ * FONCTIONS D'AIDE GÉOMÉTRIQUES
+ */
+
+function arePositionsEquivalent(position1, position2, epsilon) {
+    if (epsilon === undefined)
+        // TODO : ajuster cette valeur d'acceptation
+        epsilon = 0.0000001;
+
+    if (Math.abs(position1.lat() - position2.lat()) > epsilon)
+        return false;
+    else if (Math.abs(position1.lng() - position2.lng()) > epsilon)
+        return false;
+    else
+        return true;
+}
+
+// Source : http://stackoverflow.com/questions/2908892/get-degrees-0-360-from-one-latlng-to-another-in-javascript
+Number.prototype.toRad = function() {
+   return this * Math.PI / 180;
+};
+Number.prototype.toDeg = function() {
+   return this * 180 / Math.PI;
+};
+function getHeading(position1, position2) {
+    var lat1 = position1.lat().toRad(),
+        lat2 = position2.lat().toRad(),
+        lon1 = position1.lng().toRad(),
+        lon2 = position2.lng().toRad(),
+
+        dLon = (lon2 - lon1),
+
+        y = Math.sin(dLon) * Math.cos(lat2),
+        x = Math.cos(lat1) * Math.sin(lat2) - 
+            Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLon),
+
+        heading = Math.atan2(x, y);
+
+    // En degrés (entre 0 et 360°)
+    //return (((heading * 180 / Math.PI) + 360) % 360);
+    // En radians
+    return heading;
+}
