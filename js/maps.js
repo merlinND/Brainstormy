@@ -40,13 +40,14 @@
                 mapOptions);
         map.mapTypes.set('graph', graphMapType);
         map.setMapTypeId('graph');
-        drawCircle(myLatlng, 20, '#FF0000', map);
+        
+        drawNode(myLatlng, 20, 'Hello', '#e74c3c', map);
+        //drawTextOverlay(myLatlng, 'hello', map);
+        //drawCircle(myLatlng, 20, '#e74c3c', map);
     }
 
     
     function drawCircle(center, rad, color, map) {
-        
-        
         var CircleOptions = {
             strokeColor: color,
             strokeOpacity: 1,
@@ -57,7 +58,32 @@
             center: center,
             radius: rad
         };
-        Circle = new google.maps.Circle(CircleOptions);
+        return new google.maps.Circle(CircleOptions);
+    }
+    
+    
+    
+    function drawTextOverlay(center, string, map) {
+        
+        var mapLabelOption = {
+            fontSize : map.getZoom(),
+            fontColor : "#FFFFFF",
+            fontFamily : 'verdana',
+            minZoom : 10,
+            maxZoom : MAX_ZOOM,
+            text : string,
+            position : center,
+            strokeWeight : 2
+            
+        };
+        
+        var label = new MapLabel(mapLabelOption);         
+        label.setMap(map);
+    }
+    
+    function drawNode(center, rad, string, color, map){
+        drawCircle(center, rad, color, map);
+        drawTextOverlay(center, string, map);
     }
     
     
