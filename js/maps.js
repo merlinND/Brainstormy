@@ -1,6 +1,35 @@
 (function($) {
 
     var MAX_ZOOM = 20;
+    
+    var flatColors = {
+	"turquoise": "#1abc9c",
+	"emerald": "#2ecc71",
+	"peter-river": "#3498db",
+	"amethyst": "#9b59b6",
+	"wet-asphalt": "#34495e",
+	"green-sea": "#16a085",
+	"nephritis": "#27ae60",
+	"belize-hole": "#2980b9",
+	"wisteria": "#8e44ad",
+	"midnight-blue": "#2c3e50",
+	"sun-flower": "#f1c40f",
+	"carrot": "#e67e22",
+	"alizarin": "#e74c3c",
+	"clouds": "#ecf0f1",
+	"concrete": "#95a5a6",
+	"orange": "#f39c12",
+	"pumpkin": "#d35400",
+	"pomegranate": "#c0392b",
+	"silver": "#bdc3c7",
+	"asbestos": "#7f8c8d"
+};
+
+var flatColorsNum = ["#1abc9c","#2ecc71","#3498db","#9b59b6","#34495e","#16a085","#27ae60",
+	"#2980b9","#8e44ad", "#2c3e50","#f1c40f","#e67e22","#e74c3c","#ecf0f1","#95a5a6",
+	"#f39c12","#d35400","#c0392b", "#bdc3c7", "#7f8c8d"]
+
+    var lvlNode = 0;
 
     /* __INIT__ **/
     $(document).ready(function() {
@@ -41,6 +70,7 @@
         map.mapTypes.set('graph', graphMapType);
         map.setMapTypeId('graph');
 
+    /******* ZONE DE TEST **/
         var centerCircle = drawCircle(myLatlng, 20, '#3498db', map);
         // Test d'animation du cercle central
         var destination = new google.maps.LatLng(Math.random() / 500 - 0.0005, Math.random() / 500 - 0.0005);
@@ -49,7 +79,10 @@
         drawCirclesAround(8, myLatlng, 0.001, 20, '#d35400', map);
         
         // Node de test
-        drawNode(myLatlng, 20, 'Hello', '#e74c3c', map);
+        
+        var n = NodeFactory.create(1, "Poulet");
+        drawEdge(drawNode(_(0,-0.002),n, 0.5, map), drawNode(_(0.002,-0.003),n, 0.7, map),map);
+        drawEdge(drawNode(_(-0.002,-0.003),n, 0.1, map), drawNode(_(0.003,-0.001),n, 0.9, map),map);
     }
 
     
@@ -94,13 +127,21 @@
         label.setMap(map);
     }
     
-    function drawNode(center, rad, string, color, map){
+    function drawNode(center, node, relevence, map){
+        
+        var string = node.word;
+        var color = flatColorsNum[lvlNode++];
+        
+        lvlNode %= flatColorsNum.length;
+        var rad = relevence * 30;
+        
+        
         drawCircle(center, rad, color, map);
         drawTextOverlay(center, string, map);
         
         return {
             center : center,
-            text : string
+            children : node.edges 
         };
             
         }
@@ -188,6 +229,10 @@
             return false;
         else
             return true;
+    }
+    
+    function _(a,b) {
+        return new google.maps.LatLng(a,b);
     }
 
 })(jQuery);
