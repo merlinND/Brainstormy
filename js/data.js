@@ -91,6 +91,8 @@ var NodeFactory = {
 
 	function displayNode(node, graph, depth){
 		var representation = "";
+		if (depth > 0)
+			representation += "\n";
 		for (var i = 0; i < depth; i++){
 			representation += "    ";
 		}
@@ -99,7 +101,7 @@ var NodeFactory = {
 		// On enregistre les coordonnées auxquelles le noeud a été affiché
 		node.position = computeCoordinatesForNode(node, graph, depth);
 
-		$("#dump").text($("#dump").text() + "\n" + representation);
+		$("#dump").text($("#dump").text() + representation);
 	}
 
 	/*

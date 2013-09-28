@@ -90,10 +90,27 @@ body
 
 /* ************* */
 /*    THE MAP    */
+#map-canvas
+{
+	position: absolute;
+	top: 0; left: 0; bottom: 0; right: 0;
+	z-index: 10;
+}
 #dump
 {
+	display: block;
+	position: absolute;
+	top: 25px; right: 5px;
+	z-index: 100;
+
 	padding: 25px;
 	background-color: $pomegranate;
+	opacity: 0.2;
+
+	&:hover
+	{
+		opacity: 1;
+	}
 
 	// Test pour le responsive design
 	@include breakpoint($mobile-max-width) {
