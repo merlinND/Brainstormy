@@ -32,12 +32,17 @@
                 mapTypeIds: ['graph']
             }
         };
-
         var map = new google.maps.Map(document.getElementById('map-canvas'),
                 mapOptions);
         map.mapTypes.set('graph', graphMapType);
         map.setMapTypeId('graph');
-
+        drawEllipse(myLatlng, 2000, 5000);
+    }
+    
+    function drawEllipse(center, vRad, hRad) {
+        var point = new google.maps.LatLng(43,-78);
+      var ellipse = google.maps.Polygon.Ellipse(center,hRad,vRad,-45,"#000000",2,1,"#ffff00",0.5);
+      ellipse.setMap(map);
     }
 
 
