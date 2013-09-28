@@ -46,9 +46,10 @@
         var destination = new google.maps.LatLng(Math.random() / 500 - 0.0005, Math.random() / 500 - 0.0005);
         animateCircleTo(centerCircle, destination);
         
-        drawNode(myLatlng, 20, 'Hello', '#e74c3c', map);
-
         drawCirclesAround(8, myLatlng, 0.001, 20, '#d35400', map);
+        
+        // Node de test
+        drawNode(myLatlng, 20, 'Hello', '#e74c3c', map);
     }
 
     
@@ -76,14 +77,6 @@
         return new google.maps.Circle(CircleOptions);
     }
     
-    
-    /**
-     * 
-     * @param {google.maps.LatLng} center
-     * @param {string} string
-     * @param {google.maps.Map} map
-     * @returns {void}
-     */
     function drawTextOverlay(center, string, map) {
         var mapLabelOption = {
             fontSize : map.getZoom(),
@@ -153,6 +146,9 @@
     }
     
     
+    function animateCircleTo(circle, targetPosition, speed) {
+        if (speed === undefined)
+            speed = 0.001;
 
         // v = d / t
         // => d = v * t
@@ -176,7 +172,7 @@
             if (!arePositionsEquivalent(intermediatePosition, targetPosition, 0.0001))
                 animateCircleTo(circle, targetPosition, speed);
         }, dT);
-        
+    }
     function moveCircleTo(circle, position) {
         circle.setCenter(position);
     }
