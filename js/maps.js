@@ -26,6 +26,7 @@
     };
     var graphMapType = new google.maps.ImageMapType(graphTypeOptions);
 
+    /****** Initialize map ******/
     function initialize_map() {
         var myLatlng = new google.maps.LatLng(0, 0);
         var mapOptions = {
@@ -41,15 +42,29 @@
         map.mapTypes.set('graph', graphMapType);
         map.setMapTypeId('graph');
         
-        drawNode(myLatlng, 20, 'Hello', '#e74c3c', map);
+        var node = drawNode(myLatlng, 20, 'Hello', '#e74c3c', map);
+        var node2 = drawNode(new google.maps.LatLng(0, 0.002), 20, 'Hello', '#174c3c', map);
+        drawEdge(node, node2, map);
         //drawTextOverlay(myLatlng, 'hello', map);
         //drawCircle(myLatlng, 20, '#e74c3c', map);
-        drawCircle(myLatlng, 20, '#3498db', map);
+        //drawCircle(myLatlng, 20, '#3498db', map);
 
         drawCirclesAround(8, myLatlng, 0.001, 20, '#d35400', map);
     }
 
     
+    /******* Drawing function ****/
+    
+    /**
+     * Draw the circle of the node
+     * 
+     * @param {google.maps.LngLat} center Centre du cercle
+     * @param {int} rad Rayon
+     * @param {string} color Couleur de fond et de contour
+     * @param {google.maps.Map} map Map sur laquelle déssiner
+     * @returns {google.maps.Circle} Le cercle créé
+     * 
+     */
     function drawCircle(center, rad, color, map) {
         var CircleOptions = {
             strokeWeight: 0,
@@ -63,7 +78,13 @@
     }
     
     
-    
+    /**
+     * 
+     * @param {google.maps.LatLng} center
+     * @param {string} string
+     * @param {google.maps.Map} map
+     * @returns {void}
+     */
     function drawTextOverlay(center, string, map) {
         
         var mapLabelOption = {
@@ -85,7 +106,14 @@
     function drawNode(center, rad, string, color, map){
         drawCircle(center, rad, color, map);
         drawTextOverlay(center, string, map);
-    }
+        
+        return {
+            center : center,
+            text : string
+        };
+            
+        }
+    
 
     function drawCirclesAround(numberOfCircles, center, globalRadius, circleRadius, circleColor, map) {
 
@@ -109,6 +137,21 @@
         // On dézoom la map afin de voir au moins globalRadius
         // TODO : zoom intelligent ? Ou bien zoom statique bien choisi
         map.setZoom(MAX_ZOOM - 2);
+    }
+    
+    function drawEdge(node1, node2, map) {
+        
+        var polyLineOption = {
+            path : [node1.center, node2.center],
+            map : map,
+            strokeWeight : 2,
+            strokeColor : '#FFFFFF',
+            strokeOpacity : 1.0,
+            zIndex : -1
+        };
+        
+        return new google.maps.Polyline(polyLineOption);
+        
     }
     
     
