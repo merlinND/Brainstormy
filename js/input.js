@@ -60,7 +60,15 @@ function queryServer(node) {
 		success: function(json){
 			console.log("Succès de la requête vers le serveur :");
 
-			// TOOD : déclancher l'affichage des nouveaux noeuds et liens
+			// TODO : enregistrer la relevance dans les nodes eux-même
+			for(var i in json){
+				var node = json[i];
+				if (node.relevance === undefined)
+					// TODO : remplacer par la vraie valeur
+					node.relevance = 1;
+			}
+
+			// TODO : déclancher l'affichage des nouveaux noeuds et liens
 			console.log(json);
 		},
 		error: function(json){

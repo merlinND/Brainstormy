@@ -32,6 +32,7 @@ var NodeFactory = {
 			id: newId,
 			word: newWord,
 			edges: newEdges,
+			relevance: 1,
 
 			// Méthode : ajouter une nouvelle arrête au noeud
 			addEdge: function(whereTo, newRelevance) {

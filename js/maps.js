@@ -3,31 +3,49 @@
     var MAX_ZOOM = 20;
     
     var flatColors = {
-	"turquoise": "#1abc9c",
-	"emerald": "#2ecc71",
-	"peter-river": "#3498db",
-	"amethyst": "#9b59b6",
-	"wet-asphalt": "#34495e",
-	"green-sea": "#16a085",
-	"nephritis": "#27ae60",
-	"belize-hole": "#2980b9",
-	"wisteria": "#8e44ad",
-	"midnight-blue": "#2c3e50",
-	"sun-flower": "#f1c40f",
-	"carrot": "#e67e22",
-	"alizarin": "#e74c3c",
-	"clouds": "#ecf0f1",
-	"concrete": "#95a5a6",
-	"orange": "#f39c12",
-	"pumpkin": "#d35400",
-	"pomegranate": "#c0392b",
-	"silver": "#bdc3c7",
-	"asbestos": "#7f8c8d"
-};
-
-var flatColorsNum = ["#1abc9c","#2ecc71","#3498db","#9b59b6","#34495e","#16a085","#27ae60",
-	"#2980b9","#8e44ad", "#2c3e50","#f1c40f","#e67e22","#e74c3c","#ecf0f1","#95a5a6",
-	"#f39c12","#d35400","#c0392b", "#bdc3c7", "#7f8c8d"]
+        "turquoise": "#1abc9c",
+        "emerald": "#2ecc71",
+        "peter-river": "#3498db",
+        "amethyst": "#9b59b6",
+        "wet-asphalt": "#34495e",
+        "green-sea": "#16a085",
+        "nephritis": "#27ae60",
+        "belize-hole": "#2980b9",
+        "wisteria": "#8e44ad",
+        "midnight-blue": "#2c3e50",
+        "sun-flower": "#f1c40f",
+        "carrot": "#e67e22",
+        "alizarin": "#e74c3c",
+        "clouds": "#ecf0f1",
+        "concrete": "#95a5a6",
+        "orange": "#f39c12",
+        "pumpkin": "#d35400",
+        "pomegranate": "#c0392b",
+        "silver": "#bdc3c7",
+        "asbestos": "#7f8c8d"
+    };
+    var flatColorsNum = [
+        "#1abc9c",
+        "#2ecc71",
+        "#3498db",
+        "#9b59b6",
+        "#34495e",
+        "#16a085",
+        "#27ae60",
+        "#2980b9",
+        "#8e44ad",
+        "#2c3e50",
+        "#f1c40f",
+        "#e67e22",
+        "#e74c3c",
+        "#ecf0f1",
+        "#95a5a6",
+        "#f39c12",
+        "#d35400",
+        "#c0392b",
+        "#bdc3c7",
+        "#7f8c8d"
+    ];
 
     var lvlNode = 0;
 
@@ -57,9 +75,9 @@ var flatColorsNum = ["#1abc9c","#2ecc71","#3498db","#9b59b6","#34495e","#16a085"
 
     /****** Initialize map ******/
     function initialize_map() {
-        var myLatlng = new google.maps.LatLng(0, 0);
+        var originPosition = new google.maps.LatLng(0, 0);
         var mapOptions = {
-            center: myLatlng,
+            center: originPosition,
             zoom: MAX_ZOOM,
             streetViewControl: false,
             mapTypeControlOptions: {
@@ -70,21 +88,33 @@ var flatColorsNum = ["#1abc9c","#2ecc71","#3498db","#9b59b6","#34495e","#16a085"
         map.mapTypes.set('graph', graphMapType);
         map.setMapTypeId('graph');
 
-    /******* ZONE DE TEST **/
-        var centerCircle = drawCircle(myLatlng, 20, '#3498db', map);
+        /******* ZONE DE TEST **/
+        //var centerCircle = drawCircle(originPosition, 20, '#3498db', map);
         // Test d'animation du cercle central
-        //var centerCircle = drawCircle(myLatlng, 20, '#3498db', map);
+        //var centerCircle = drawCircle(originPosition, 20, '#3498db', map);
         //var destination = new google.maps.LatLng(Math.random() / 500 - 0.0005, Math.random() / 500 - 0.0005);
         //animateCircleTo(centerCircle, destination);
         
-        var ancestorPosition = new google.maps.LatLng(0.001, 0.001);
-        drawCirclesAround(8, myLatlng, 0.001, ancestorPosition, 20, '#d35400', map);
+        var originNode = NodeFactory.create(0, "pet"),
+            allNodes = [
+                NodeFactory.create(1, "dog"),
+                NodeFactory.create(2, "cat"),
+                NodeFactory.create(3, "snake"),
+                NodeFactory.create(4, "racoon"),
+                NodeFactory.create(5, "python")
+            ],
+            secondNodes = [
+                NodeFactory.create(6, "dog"),
+                NodeFactory.create(7, "cat"),
+                NodeFactory.create(8, "snake"),
+                NodeFactory.create(9, "racoon"),
+                NodeFactory.create(10, "python")
+            ];
         
-        // Node de test
-        
-        var n = NodeFactory.create(1, "Poulet");
-        drawEdge(drawNode(_(0,-0.002),n, 0.5, map), drawNode(_(0.002,-0.003),n, 0.7, map),map);
-        drawEdge(drawNode(_(-0.002,-0.003),n, 0.1, map), drawNode(_(0.003,-0.001),n, 0.9, map),map);
+        drawNode(originPosition, originNode, map);
+        drawNodesAround(allNodes, originNode, 0.002, undefined, map);
+        // On affiche un deuxième tour de test
+        drawNodesAround(secondNodes, allNodes[1], 0.001, allNodes[1].position, map);
     }
 
     
@@ -118,11 +148,11 @@ var flatColorsNum = ["#1abc9c","#2ecc71","#3498db","#9b59b6","#34495e","#16a085"
             fontSize : map.getZoom(),
             fontColor : "#FFFFFF",
             fontFamily : 'verdana',
-            minZoom : 10,
+            minZoom : 16,
             maxZoom : MAX_ZOOM,
             text : string,
-            position : center,
-            strokeWeight : 2
+            position : new google.maps.LatLng(center.lat() + 0.00005, center.lng()),
+            strokeWeight : 1
             
         };
         
@@ -130,27 +160,29 @@ var flatColorsNum = ["#1abc9c","#2ecc71","#3498db","#9b59b6","#34495e","#16a085"
         label.setMap(map);
     }
     
-    function drawNode(center, node, relevence, map){
+    function drawNode(center, node, map){
         
         var string = node.word;
         var color = flatColorsNum[lvlNode++];
         
         lvlNode %= flatColorsNum.length;
-        var rad = relevence * 30;
+        var rad = node.relevance * 30;
         
         
         drawCircle(center, rad, color, map);
         drawTextOverlay(center, string, map);
         
-        return {
-            center : center,
-            children : node.edges 
-        };
-            
-        }
-    
+        // On enregistre la position du node dans celui-ci
+        node.position = center;
 
-    function drawCirclesAround(numberOfCircles, center, globalRadius, ancestorPosition, circleRadius, circleColor, map) {
+        return node;
+    }
+    
+    function drawNodesAround(nodes, centerNode, globalRadius, ancestorPosition, map) {
+        if(ancestorPosition === undefined)
+            ancestorPosition = new google.maps.LatLng(-0.001, 0.000);
+
+        var center = centerNode.position;
 
         var maxAngle = (3/2) * Math.PI,
             ancestorOffset = Math.PI - getHeading(ancestorPosition, center),
@@ -158,27 +190,31 @@ var flatColorsNum = ["#1abc9c","#2ecc71","#3498db","#9b59b6","#34495e","#16a085"
 
         // On va décrire un grand cercle,
         // et placer les marqueurs à intervalle régulier
-        for (var i = 0; i < numberOfCircles; i++) {
+        for (var i = 0; i < nodes.length; i++) {
             var progress = 0.5;
-            if (numberOfCircles > 1)
-                progress = i / (numberOfCircles - 1);
+            if (nodes.length > 1)
+                progress = i / (nodes.length - 1);
             var lat = center.lat(),
                 lng = center.lng(),
                 dLat = globalRadius * Math.sin(progress * maxAngle + angularOffset),
                 dLng = globalRadius * Math.cos(progress * maxAngle + angularOffset);
+            
             var thisCenter = new google.maps.LatLng(lat + dLat, lng + dLng);
-            drawCircle(thisCenter, circleRadius, circleColor, map);
+            drawNode(thisCenter, nodes[i], map);
+
+            // On dessine également la connexion entre ce noeud et son parent
+            drawEdge(centerNode, nodes[i], map);
         }
 
         // On dézoom la map afin de voir au moins globalRadius
         // TODO : zoom intelligent ? Ou bien zoom statique bien choisi
-        map.setZoom(MAX_ZOOM - 2);
+        map.setZoom(MAX_ZOOM - 3);
     }
     
     function drawEdge(node1, node2, map) {
         
         var polyLineOption = {
-            path : [node1.center, node2.center],
+            path : [node1.position, node2.position],
             map : map,
             strokeWeight : 2,
             strokeColor : '#FFFFFF',
