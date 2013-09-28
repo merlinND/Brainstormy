@@ -1,89 +1,92 @@
-(function($) {
-    var MAP = null;
-    var MAX_ZOOM = 20;
+var flatColors = {
+    "turquoise": "#1abc9c",
+    "emerald": "#2ecc71",
+    "peter-river": "#3498db",
+    "amethyst": "#9b59b6",
+    "wet-asphalt": "#34495e",
+    "green-sea": "#16a085",
+    "nephritis": "#27ae60",
+    "belize-hole": "#2980b9",
+    "wisteria": "#8e44ad",
+    "midnight-blue": "#2c3e50",
+    "sun-flower": "#f1c40f",
+    "carrot": "#e67e22",
+    "alizarin": "#e74c3c",
+    "clouds": "#ecf0f1",
+    "concrete": "#95a5a6",
+    "orange": "#f39c12",
+    "pumpkin": "#d35400",
+    "pomegranate": "#c0392b",
+    "silver": "#bdc3c7",
+    "asbestos": "#7f8c8d"
+};
+// TODO : changer l'ordre pour qu'il y ait une alternance sympathique
+var flatColorsNum = [
+    "#1abc9c",
+    "#2ecc71",
+    "#3498db",
+    "#9b59b6",
+    "#34495e",
+    "#16a085",
+    "#27ae60",
+    "#2980b9",
+    "#8e44ad",
+    "#2c3e50",
+    "#f1c40f",
+    "#e67e22",
+    "#e74c3c",
+    "#ecf0f1",
+    "#95a5a6",
+    "#f39c12",
+    "#d35400",
+    "#c0392b",
+    "#bdc3c7",
+    "#7f8c8d"
+];
+
+var ViewManager = {
+    MAP: null,
+    MAX_ZOOM: 20,
     
-    var flatColors = {
-        "turquoise": "#1abc9c",
-        "emerald": "#2ecc71",
-        "peter-river": "#3498db",
-        "amethyst": "#9b59b6",
-        "wet-asphalt": "#34495e",
-        "green-sea": "#16a085",
-        "nephritis": "#27ae60",
-        "belize-hole": "#2980b9",
-        "wisteria": "#8e44ad",
-        "midnight-blue": "#2c3e50",
-        "sun-flower": "#f1c40f",
-        "carrot": "#e67e22",
-        "alizarin": "#e74c3c",
-        "clouds": "#ecf0f1",
-        "concrete": "#95a5a6",
-        "orange": "#f39c12",
-        "pumpkin": "#d35400",
-        "pomegranate": "#c0392b",
-        "silver": "#bdc3c7",
-        "asbestos": "#7f8c8d"
-    };
-    var flatColorsNum = [
-        "#1abc9c",
-        "#2ecc71",
-        "#3498db",
-        "#9b59b6",
-        "#34495e",
-        "#16a085",
-        "#27ae60",
-        "#2980b9",
-        "#8e44ad",
-        "#2c3e50",
-        "#f1c40f",
-        "#e67e22",
-        "#e74c3c",
-        "#ecf0f1",
-        "#95a5a6",
-        "#f39c12",
-        "#d35400",
-        "#c0392b",
-        "#bdc3c7",
-        "#7f8c8d"
-    ];
+    MAX_RADIUS: 60,
+    DEFAULT_ORBIT: null, 
 
-    var lvlNode = 0;
+    deepestNodeLevel: 0,
 
-    /* __INIT__ **/
-    $(document).ready(function() {
-        init();
 
-    });
-
-    function init() {
-        initializeMap();
-    }
+    init: function() {
+        this.initializeMap();
+        console.log(">> Maps ready");
+    },
 
 
     /*********** Creating custom Map Type **************/
-    var graphTypeOptions = {
-        getTileUrl: function(coord, zoom) {
-            return "./images/maps_background.jpg";
-        },
-        tileSize: new google.maps.Size(256, 256),
-        maxZoom: MAX_ZOOM,
-        minZoom: 0,
-        radius: 1738000,
-        name: 'Graph'
-    };
-    var graphMapType = new google.maps.ImageMapType(graphTypeOptions);
 
-    /****** Initialize map ******/
-    function initializeMap() {
-        var originPosition = new google.maps.LatLng(0, 0);
-        var mapOptions = {
-            center: originPosition,
-            zoom: MAX_ZOOM,
-            streetViewControl: false,
-            mapTypeControlOptions: {
-                mapTypeIds: ['graph']
+    initializeMap: function() {
+        this.DEFAULT_ORBIT = (this.MAX_RADIUS) / 30000;
+
+        var graphTypeOptions = {
+                getTileUrl: function(coord, zoom) {
+                    return "images/maps_background.jpg";
+                },
+                tileSize: new google.maps.Size(256, 256),
+                maxZoom: this.MAX_ZOOM,
+                minZoom: 0,
+                radius: 1738000,
+                name: 'Graph'
+            },
+            graphMapType = new google.maps.ImageMapType(graphTypeOptions),
+            originPosition = new google.maps.LatLng(0, 0);
+            
+            mapOptions = {
+                center: originPosition,
+                zoom: this.MAX_ZOOM,
+                streetViewControl: false,
+                mapTypeControlOptions: {
+                    mapTypeIds: ['graph']
             }
         };
+
         MAP = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
         MAP.mapTypes.set('graph', graphMapType);
         MAP.setMapTypeId('graph');
@@ -104,76 +107,74 @@
                 NodeFactory.create(10, "python")
             ];
         
-        drawNode(originPosition, originNode);
-        drawNodesAround(allNodes, originNode, 0.002, null);
+        this.drawNode(originPosition, originNode);
+        this.drawNodesAround(allNodes, originNode);
         // On affiche un deuxième tour de test
-        drawNodesAround(secondNodes, allNodes[1], 0.001, allNodes[1].position);
-    }
+        this.drawNodesAround(secondNodes, allNodes[1], this.DEFAULT_ORBIT / 1.7, allNodes[1].position);
+    },
 
     
-    /******* Drawing function ****/
+    /******* Drawing functions ****/
     
     /**
      * Draw the circle of the node
      * 
      * @param {google.maps.LngLat} center Centre du cercle
-     * @param {int} rad Rayon
+     * @param {int} radius Rayon
      * @param {string} color Couleur de fond et de contour
      * @param {google.maps.Map} map Map sur laquelle déssiner
      * @returns {google.maps.Circle} Le cercle créé
      * 
      */
-    function drawCircle(center, rad, color) {
+    drawCircle: function(center, radius, color) {
         var CircleOptions = {
             strokeWeight: 0,
             fillColor: color,
             fillOpacity: 1,
             map: MAP,
             center: center,
-            radius: rad
+            radius: radius
         };
 
         return new google.maps.Circle(CircleOptions);
-    }
+    },
     
-    function drawTextOverlay(center, string) {
+    drawTextOverlay: function(center, string) {
         var mapLabelOption = {
             fontSize : MAP.getZoom(),
             fontColor : "#FFFFFF",
             fontFamily : 'verdana',
             minZoom : 16,
-            maxZoom : MAX_ZOOM,
+            maxZoom : this.MAX_ZOOM,
             text : string,
             position : new google.maps.LatLng(center.lat() + 0.00005, center.lng()),
             strokeWeight : 1
-            
         };
         
         var label = new MapLabel(mapLabelOption);         
         label.setMap(MAP);
-    }
+    },
     
-    function drawNode(center, node){
+    drawNode: function(center, node){
         
         var string = node.word;
-        var color = flatColorsNum[lvlNode++];
+        var color = flatColorsNum[this.deepestNodeLevel % flatColorsNum.length];
+        var radius = node.relevance * this.MAX_RADIUS;
         
-        lvlNode %= flatColorsNum.length;
-        var rad = node.relevance * 30;
-        
-        
-        drawCircle(center, rad, color);
-        drawTextOverlay(center, string);
+        this.drawCircle(center, radius, color);
+        this.drawTextOverlay(center, string);
         
         // On enregistre la position du node dans celui-ci
         node.position = center;
 
         return node;
-    }
+    },
     
-    function drawNodesAround(nodes, centerNode, globalRadius, ancestorPosition) {
-        if(ancestorPosition === null)
+    drawNodesAround: function(nodes, centerNode, globalRadius, ancestorPosition) {
+        if (ancestorPosition === null || ancestorPosition === undefined)
             ancestorPosition = new google.maps.LatLng(-0.001, 0.000);
+        if (globalRadius === null || globalRadius === undefined)
+            globalRadius = this.DEFAULT_ORBIT;
 
         var center = centerNode.position;
 
@@ -193,18 +194,20 @@
                 dLng = globalRadius * Math.cos(progress * maxAngle + angularOffset);
             
             var thisCenter = new google.maps.LatLng(lat + dLat, lng + dLng);
-            drawNode(thisCenter, nodes[i]);
+            this.drawNode(thisCenter, nodes[i]);
 
             // On dessine également la connexion entre ce noeud et son parent
-            drawEdge(centerNode, nodes[i]);
+            this.drawEdge(centerNode, nodes[i]);
         }
 
         // On dézoom la map afin de voir au moins globalRadius
         // TODO : zoom intelligent ? Ou bien zoom statique bien choisi
-        MAP.setZoom(MAX_ZOOM - 3);
-    }
+        MAP.setZoom(this.MAX_ZOOM - 3);
+
+        this.deepestNodeLevel++;
+    },
     
-    function drawEdge(node1, node2) {
+    drawEdge: function(node1, node2) {
         
         var polyLineOption = {
             path : [node1.position, node2.position],
@@ -217,10 +220,10 @@
         
         return new google.maps.Polyline(polyLineOption);
         
-    }
+    },
     
     
-    function animateCircleTo(circle, targetPosition, speed) {
+    animateCircleTo: function(circle, targetPosition, speed) {
         if (speed === undefined)
             speed = 0.001;
 
@@ -229,7 +232,7 @@
         var dT = 5,
             dPosition = (dT/1000) * speed;
 
-        window.setTimeout(function(){
+        window.setTimeout()(function(){
             var lat = circle.center.lat(),
                 lng = circle.center.lng(),
                 dLat = dPosition,
@@ -246,12 +249,20 @@
             if (!arePositionsEquivalent(intermediatePosition, targetPosition, 0.0001))
                 animateCircleTo(circle, targetPosition, speed);
         }, dT);
-    }
-    function moveCircleTo(circle, position) {
+    },
+    moveCircleTo: function(circle, position) {
         circle.setCenter(position);
     }
 
-})(jQuery);
+};
+
+
+/**
+ * INIT
+ */
+$(document).ready(function() {
+    ViewManager.init();
+});
 
 
 /**

@@ -62,14 +62,18 @@ function queryServer(node) {
 
 			// TODO : enregistrer la relevance dans les nodes eux-même
 			for(var i in json){
-				var node = json[i];
-				if (node.relevance === undefined)
+				var thisNode = json[i];
+				if (thisNode.relevance === undefined)
 					// TODO : remplacer par la vraie valeur
-					node.relevance = 1;
+					thisNode.relevance = 1;
 			}
 
-			// TODO : déclancher l'affichage des nouveaux noeuds et liens
 			console.log(json);
+
+			// TODO : déclancher l'affichage des nouveaux noeuds et liens
+			var centralNode = node;
+
+			ViewManager.drawNodesAround(nodes, centralNode, ViewManager.DEFAULT_RADIUS, centralNode.position);
 		},
 		error: function(json){
 			console.log("Erreur pour charger la page : " + json.responseText);
