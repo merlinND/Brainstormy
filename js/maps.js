@@ -1,5 +1,5 @@
 (function($) {
-
+    var MAP = null;
     var MAX_ZOOM = 20;
     
     var flatColors = {
@@ -56,7 +56,7 @@
     });
 
     function init() {
-        initialize_map();
+        initializeMap();
     }
 
 
@@ -74,7 +74,7 @@
     var graphMapType = new google.maps.ImageMapType(graphTypeOptions);
 
     /****** Initialize map ******/
-    function initialize_map() {
+    function initializeMap() {
         var originPosition = new google.maps.LatLng(0, 0);
         var mapOptions = {
             center: originPosition,
@@ -84,16 +84,9 @@
                 mapTypeIds: ['graph']
             }
         };
-        var map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
-        map.mapTypes.set('graph', graphMapType);
-        map.setMapTypeId('graph');
-
-        /******* ZONE DE TEST **/
-        //var centerCircle = drawCircle(originPosition, 20, '#3498db', map);
-        // Test d'animation du cercle central
-        //var centerCircle = drawCircle(originPosition, 20, '#3498db', map);
-        //var destination = new google.maps.LatLng(Math.random() / 500 - 0.0005, Math.random() / 500 - 0.0005);
-        //animateCircleTo(centerCircle, destination);
+        MAP = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+        MAP.mapTypes.set('graph', graphMapType);
+        MAP.setMapTypeId('graph');
         
         var originNode = NodeFactory.create(0, "pet"),
             allNodes = [
@@ -111,10 +104,10 @@
                 NodeFactory.create(10, "python")
             ];
         
-        drawNode(originPosition, originNode, map);
-        drawNodesAround(allNodes, originNode, 0.002, undefined, map);
+        drawNode(originPosition, originNode);
+        drawNodesAround(allNodes, originNode, 0.002, null);
         // On affiche un deuxième tour de test
-        drawNodesAround(secondNodes, allNodes[1], 0.001, allNodes[1].position, map);
+        drawNodesAround(secondNodes, allNodes[1], 0.001, allNodes[1].position);
     }
 
     
@@ -130,12 +123,12 @@
      * @returns {google.maps.Circle} Le cercle créé
      * 
      */
-    function drawCircle(center, rad, color, map) {
+    function drawCircle(center, rad, color) {
         var CircleOptions = {
             strokeWeight: 0,
             fillColor: color,
             fillOpacity: 1,
-            map: map,
+            map: MAP,
             center: center,
             radius: rad
         };
@@ -143,9 +136,9 @@
         return new google.maps.Circle(CircleOptions);
     }
     
-    function drawTextOverlay(center, string, map) {
+    function drawTextOverlay(center, string) {
         var mapLabelOption = {
-            fontSize : map.getZoom(),
+            fontSize : MAP.getZoom(),
             fontColor : "#FFFFFF",
             fontFamily : 'verdana',
             minZoom : 16,
@@ -157,10 +150,10 @@
         };
         
         var label = new MapLabel(mapLabelOption);         
-        label.setMap(map);
+        label.setMap(MAP);
     }
     
-    function drawNode(center, node, map){
+    function drawNode(center, node){
         
         var string = node.word;
         var color = flatColorsNum[lvlNode++];
@@ -169,8 +162,8 @@
         var rad = node.relevance * 30;
         
         
-        drawCircle(center, rad, color, map);
-        drawTextOverlay(center, string, map);
+        drawCircle(center, rad, color);
+        drawTextOverlay(center, string);
         
         // On enregistre la position du node dans celui-ci
         node.position = center;
@@ -178,8 +171,8 @@
         return node;
     }
     
-    function drawNodesAround(nodes, centerNode, globalRadius, ancestorPosition, map) {
-        if(ancestorPosition === undefined)
+    function drawNodesAround(nodes, centerNode, globalRadius, ancestorPosition) {
+        if(ancestorPosition === null)
             ancestorPosition = new google.maps.LatLng(-0.001, 0.000);
 
         var center = centerNode.position;
@@ -200,22 +193,22 @@
                 dLng = globalRadius * Math.cos(progress * maxAngle + angularOffset);
             
             var thisCenter = new google.maps.LatLng(lat + dLat, lng + dLng);
-            drawNode(thisCenter, nodes[i], map);
+            drawNode(thisCenter, nodes[i]);
 
             // On dessine également la connexion entre ce noeud et son parent
-            drawEdge(centerNode, nodes[i], map);
+            drawEdge(centerNode, nodes[i]);
         }
 
         // On dézoom la map afin de voir au moins globalRadius
         // TODO : zoom intelligent ? Ou bien zoom statique bien choisi
-        map.setZoom(MAX_ZOOM - 3);
+        MAP.setZoom(MAX_ZOOM - 3);
     }
     
-    function drawEdge(node1, node2, map) {
+    function drawEdge(node1, node2) {
         
         var polyLineOption = {
             path : [node1.position, node2.position],
-            map : map,
+            map : MAP,
             strokeWeight : 2,
             strokeColor : '#FFFFFF',
             strokeOpacity : 1.0,
