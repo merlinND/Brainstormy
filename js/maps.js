@@ -1,4 +1,6 @@
 (function($) {
+    
+    var MAX_ZOOM=20;
 
     /* __INIT__ **/
     $(document).ready(function() {
@@ -15,7 +17,7 @@
     var graphTypeOptions = {
         getTileUrl: function(coord, zoom) { return "./images/maps_background.jpg"},
         tileSize: new google.maps.Size(256, 256),
-        maxZoom: 20,
+        maxZoom: MAX_ZOOM,
         minZoom: 0,
         radius: 1738000,
         name: 'Graph'
@@ -26,7 +28,7 @@
         var myLatlng = new google.maps.LatLng(0, 0);
         var mapOptions = {
             center: myLatlng,
-            zoom: 1,
+            zoom: MAX_ZOOM,
             streetViewControl: false,
             mapTypeControlOptions: {
                 mapTypeIds: ['graph']
