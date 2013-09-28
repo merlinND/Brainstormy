@@ -2,8 +2,19 @@
 <head>
 	<title>Brainstormy</title>
 
+    <!-- Script included -->
 	<script type="text/javascript" src="js/jquery.js"></script>
 	<script type="text/javascript" src="js/data.js"></script>
+    <script type="text/javascript" src="js/maps.js"></script>
+    
+    <!-- Raw Script -->
+    <script type="text/javascript"
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDsYe14TDiynXW9aGd54b6TKDHkQXESF1E&sensor=false">
+    </script>
+    
+    <!-- Style -->
+    <link rel="stylesheet" type="text/css" href="/_static/css/screen.css">
+    
 </head>
 <body>
 	<h1>Brainstormy</h1>
@@ -11,6 +22,7 @@
 	<pre id="dump">
 
 	</pre>
-
+    
+    <div id="map-canvas"></div>
 </body>
 </html>
