@@ -37,17 +37,16 @@
                 mapTypeIds: ['graph']
             }
         };
-        var map = new google.maps.Map(document.getElementById('map-canvas'),
-                mapOptions);
+        var map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
         map.mapTypes.set('graph', graphMapType);
         map.setMapTypeId('graph');
+
+        var centerCircle = drawCircle(myLatlng, 20, '#3498db', map);
+        // Test d'animation du cercle central
+        var destination = new google.maps.LatLng(Math.random() / 500 - 0.0005, Math.random() / 500 - 0.0005);
+        animateCircleTo(centerCircle, destination);
         
-        var node = drawNode(myLatlng, 20, 'Hello', '#e74c3c', map);
-        var node2 = drawNode(new google.maps.LatLng(0, 0.002), 20, 'Hello', '#174c3c', map);
-        drawEdge(node, node2, map);
-        //drawTextOverlay(myLatlng, 'hello', map);
-        //drawCircle(myLatlng, 20, '#e74c3c', map);
-        //drawCircle(myLatlng, 20, '#3498db', map);
+        drawNode(myLatlng, 20, 'Hello', '#e74c3c', map);
 
         drawCirclesAround(8, myLatlng, 0.001, 20, '#d35400', map);
     }
@@ -68,7 +67,7 @@
     function drawCircle(center, rad, color, map) {
         var CircleOptions = {
             strokeWeight: 0,
-            fillColor: color ,
+            fillColor: color,
             fillOpacity: 1,
             map: map,
             center: center,
@@ -86,7 +85,6 @@
      * @returns {void}
      */
     function drawTextOverlay(center, string, map) {
-        
         var mapLabelOption = {
             fontSize : map.getZoom(),
             fontColor : "#FFFFFF",
@@ -131,7 +129,7 @@
                 dLat = globalRadius * Math.sin(progress * maxAngle + angularOffset),
                 dLng = globalRadius * Math.cos(progress * maxAngle + angularOffset);
             var thisCenter = new google.maps.LatLng(lat + dLat, lng + dLng);
-            drawCircle(thisCenter, circleRadius, circleColor, map)
+            drawCircle(thisCenter, circleRadius, circleColor, map);
         }
 
         // On dézoom la map afin de voir au moins globalRadius
@@ -156,5 +154,44 @@
     
     
 
+        // v = d / t
+        // => d = v * t
+        var dT = 5,
+            dPosition = (dT/1000) * speed;
+
+        window.setTimeout(function(){
+            var lat = circle.center.lat(),
+                lng = circle.center.lng(),
+                dLat = dPosition,
+                dLng = dPosition;
+
+            if (targetPosition.lat() - lat < 0)
+                dLat *= -1;
+            if (targetPosition.lng() - lng < 0)
+                dLng *= -1;
+
+            intermediatePosition = new google.maps.LatLng(lat + dLat, lng + dLng);
+            moveCircleTo(circle, intermediatePosition);
+
+            if (!arePositionsEquivalent(intermediatePosition, targetPosition, 0.0001))
+                animateCircleTo(circle, targetPosition, speed);
+        }, dT);
+        
+    function moveCircleTo(circle, position) {
+        circle.setCenter(position);
+    }
+
+    function arePositionsEquivalent(position1, position2, epsilon) {
+        if (epsilon === undefined)
+            // TODO : ajuster cette valeur d'acceptation
+            epsilon = 0.0000001;
+
+        if (Math.abs(position1.lat() - position2.lat()) > epsilon)
+            return false;
+        else if (Math.abs(position1.lng() - position2.lng()) > epsilon)
+            return false;
+        else
+            return true;
+    }
 
 })(jQuery);

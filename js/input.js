@@ -15,7 +15,7 @@ $.QUERY_URL = "query";
 
 		// Test d'une requête vers le serveur
 		var testNode = NodeFactory.create(0, "cat");
-		queryServer(testNode);
+		//queryServer(testNode);
 	}
 
 })(jQuery);
@@ -45,8 +45,7 @@ function queryServer(node) {
 		success: function(json){
 			console.log("Succès de la requête vers le serveur :");
 
-			// On transforme la string en objet
-			//json = JSON.parse(json);
+			// TOOD : déclancher l'affichage des nouveaux noeuds et liens
 			console.log(json);
 		},
 		error: function(json){
