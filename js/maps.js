@@ -36,8 +36,7 @@
                 mapTypeIds: ['graph']
             }
         };
-        var map = new google.maps.Map(document.getElementById('map-canvas'),
-                mapOptions);
+        var map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
         map.mapTypes.set('graph', graphMapType);
         map.setMapTypeId('graph');
 
@@ -45,6 +44,8 @@
         // Test d'animation du cercle central
         var destination = new google.maps.LatLng(Math.random() / 500 - 0.0005, Math.random() / 500 - 0.0005);
         animateCircleTo(centerCircle, destination);
+        
+        drawNode(myLatlng, 20, 'Hello', '#e74c3c', map);
 
         drawCirclesAround(8, myLatlng, 0.001, 20, '#d35400', map);
     }
@@ -60,6 +61,28 @@
             radius: rad
         };
         return new google.maps.Circle(CircleOptions);
+    }
+    
+    function drawTextOverlay(center, string, map) {
+        var mapLabelOption = {
+            fontSize : map.getZoom(),
+            fontColor : "#FFFFFF",
+            fontFamily : 'verdana',
+            minZoom : 10,
+            maxZoom : MAX_ZOOM,
+            text : string,
+            position : center,
+            strokeWeight : 2
+            
+        };
+        
+        var label = new MapLabel(mapLabelOption);         
+        label.setMap(map);
+    }
+    
+    function drawNode(center, rad, string, color, map){
+        drawCircle(center, rad, color, map);
+        drawTextOverlay(center, string, map);
     }
 
     function drawCirclesAround(numberOfCircles, center, globalRadius, circleRadius, circleColor, map) {
@@ -115,7 +138,6 @@
     }
     function moveCircleTo(circle, position) {
         circle.setCenter(position);
-        console.log("Cercle déplacé à " + position);
     }
 
     function arePositionsEquivalent(position1, position2, epsilon) {
