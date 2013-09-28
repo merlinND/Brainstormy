@@ -1,12 +1,9 @@
-$.HOST = "http://192.168.66.26";
+$.HOST = "http://192.168.66.26:9000";
 $.QUERY_URL = "query";
 
 (function($){
 
 	$(document).ready(function(){
-		// TODO : à désactiver
-		$("#startingPoint").parent("form").hide();
-
 		init();
 	});
 
@@ -37,16 +34,19 @@ function startSubmit(e) {
 }
 
 function queryServer(node) {
-	console.log(node);
-	
+	console.log("On fait un envoi au serveur : " + JSON.stringify(node));
+
 	// TODO : envoyer le mot au serveur
 	$.ajax({
-		url: $.HOST + '/' + $.QUERY_URL,
-		type: 'POST',
-		data: "hey=yo",
+		url: $.HOST + '/' + $.QUERY_URL + "/",
+		type: 'GET',
+		data: "json=" + JSON.stringify(node),
 		dataType: "json",
 		success: function(json){
 			console.log("Succès de la requête vers le serveur :");
+
+			// On transforme la string en objet
+			//json = JSON.parse(json);
 			console.log(json);
 		},
 		error: function(json){
