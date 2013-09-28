@@ -57,11 +57,11 @@ var NodeFactory = {
 		var nodes = graph.nodes;
 
 		if (nodes.length > 0)
-			displayGraphFromNode(nodes[0], nodes, 0);
+			displayGraphFromNode(nodes[0], null, nodes, 0);
 		else
 			console.log("Le graphe passé est vide.");
 	}
-	function displayGraphFromNode(currentNode, nodes, depth){
+	function displayGraphFromNode(currentNode, parent, nodes, depth){
 		// On affiche le noeud en cours
 		if (currentNode.position === undefined){
 			displayNode(currentNode, nodes, depth);
@@ -74,7 +74,7 @@ var NodeFactory = {
 			// On récupère l'objet node qui représente la cible de cette connexion
 			var targetNode = nodes[edge.to];
 			// On affiche récursivement la suite du graphe à partir de cette cible
-			displayGraphFromNode(targetNode, nodes, depth+1);
+			displayGraphFromNode(targetNode, currentNode, nodes, depth+1);
 
 			// Et on dessine le lien entre le noeud courant et la cible
 			// TODO
@@ -85,7 +85,12 @@ var NodeFactory = {
 	 * AFFICHAGE
 	 * (à déplacer dans un module à part)
 	 */
-	function computeCoordinatesForNode(node, nodes, depth){
+	function computeCoordinatesForNode(node, parent, nodes, depth){
+		var parentLat = Math.random(), //parent.position.lat,
+			parentLng = Math.random(); //parent.position.lng;
+
+
+
 		return { lat: Math.random(), lng: Math.random() };
 	}
 
