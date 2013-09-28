@@ -1,6 +1,6 @@
 (function($) {
-    
-    var MAX_ZOOM=20;
+
+    var MAX_ZOOM = 20;
 
     /* __INIT__ **/
     $(document).ready(function() {
@@ -15,7 +15,9 @@
 
     /*********** Creating custom Map Type **************/
     var graphTypeOptions = {
-        getTileUrl: function(coord, zoom) { return "./images/maps_background.jpg"},
+        getTileUrl: function(coord, zoom) {
+            return "./images/maps_background.jpg"
+        },
         tileSize: new google.maps.Size(256, 256),
         maxZoom: MAX_ZOOM,
         minZoom: 0,
@@ -38,15 +40,27 @@
                 mapOptions);
         map.mapTypes.set('graph', graphMapType);
         map.setMapTypeId('graph');
-        drawEllipse(myLatlng, 2000, 5000);
-    }
-    
-    function drawEllipse(center, vRad, hRad) {
-        var point = new google.maps.LatLng(43,-78);
-      var ellipse = google.maps.Polygon.Ellipse(center,hRad,vRad,-45,"#000000",2,1,"#ffff00",0.5);
-      ellipse.setMap(map);
+        drawCircle(myLatlng, 20, '#FF0000', map);
     }
 
+    
+    function drawCircle(center, rad, color, map) {
+        
+        
+        var CircleOptions = {
+            strokeColor: color,
+            strokeOpacity: 1,
+            strokeWeight: 2,
+            fillColor: color ,
+            fillOpacity: 1,
+            map: map,
+            center: center,
+            radius: rad
+        };
+        Circle = new google.maps.Circle(CircleOptions);
+    }
+    
+    
 
 
 })(jQuery);
