@@ -21,6 +21,15 @@ DATABASES = {
     }
 }
 
+#NEO4J_DATABASES = {
+    #'default' : {
+        #'HOST':'localhost',
+        #'PORT':7474,
+        #'ENDPOINT':'/db/data'
+    #}
+#}
+#DATABASE_ROUTERS = ['neo4django.utils.Neo4djangoIntegrationRouter']
+
 # Hosts/domain names that are valid for this site; required if DEBUG is False
 # See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
 ALLOWED_HOSTS = []
