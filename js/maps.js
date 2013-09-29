@@ -45,6 +45,8 @@ var flatColorsNum = [
             //"#2c3e50"
 ];
 
+var k = 0;
+
 var ViewManager = {
     MAP: null,
     MAX_ZOOM: 20,
@@ -184,7 +186,7 @@ var ViewManager = {
 
 
         var ancestorOffset = Math.PI - getHeading(ancestorPosition, center),
-                angularOffset = ((2 * Math.PI) - maxAngle) / 2 - ancestorOffset;
+            angularOffset = ((2 * Math.PI) - maxAngle) / 2 - ancestorOffset;
 
         var theta = ancestorOffset / Math.PI;
         //console.log("Le heading de " + ancestorPosition + " à " + center + " est " + theta + " pi");
@@ -315,9 +317,8 @@ var ViewManager = {
                 label = ViewManager.CIRCLES_LABELS[i][2];
             }
         }
-
-        var k = 0;
-        window.setInterval(function() {
+        k = 0;
+        var theInterval = window.setInterval(function() {
 
             elat = elat + (nlat - elat) / 50;
             elng = elng + (nlng - elng) / 50;
@@ -329,12 +330,12 @@ var ViewManager = {
             //var node = GraphManager.theGraph.get(ViewManager.EDGES[j][2]);
             circle.setCenter(pos);
             label.set('position', pos);
-            if (k >= 50) {
+            if (k >= 5000) {
                 //i = ViewManager.EDGES.length + 1;
-                window.clearInterval();
+                window.clearInterval(theInterval);
+                console.log("Bonjour");
 
             }
-            console.log("Bonjour");
         }, 10);
     },
     /******* INTERACTION FUNCTIONS ****/

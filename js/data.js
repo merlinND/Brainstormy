@@ -108,8 +108,11 @@ var GraphManager = {
 			var edge = currentNode.edges[j];
 			// On récupère l'objet node qui représente la cible de cette connexion
 			var targetNode = graph.get(edge.to);
+			
 			targetNode.parentId = currentNode.id;
 			targetNode.relevance = edge.relevance;
+			targetNode.depth = depth;
+
 			// On l'ajoute à la liste des enfants
 			childrenNodes.push(targetNode);
 		}
@@ -192,5 +195,7 @@ var GraphManager = {
  */
 $(document).ready(function(){
 	GraphManager.init();
+	GraphManager.theGraph = GraphManager.createSampleGraph();
 	GraphManager.displayAllGraph(GraphManager.theGraph);
+	//$("form").hide();
 });

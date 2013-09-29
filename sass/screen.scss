@@ -173,7 +173,7 @@ header
 /*   USER INPUT  */
 form
 {
-	display: block;
+	display: none;
 
 	position: absolute;
 	top: 0; left: 0; bottom: 0; right: 0;
@@ -197,7 +197,7 @@ form
 /*    REPORT     */
 #report
 {
-	display: none;
+	display: block;
 
 	position: absolute;
 	top: -5000; left: 0; bottom: 5000; right: 0;
@@ -208,7 +208,7 @@ form
 	{
 		position: relative;
 		width: 80%;
-		margin: 0 auto; padding: 25px;
+		margin: 25px auto 0 auto; padding: 25px;
 		background-color: $wet-asphalt;
 
 		button
@@ -233,7 +233,7 @@ form
 
 			.nodeName
 			{
-				color: $concrete;
+				color: white;
 				font-size: 42px;
 				line-height: $stepHeight;
 			}

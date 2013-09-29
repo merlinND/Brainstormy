@@ -261,7 +261,7 @@ header h1 {
 /*   USER INPUT  */
 /* line 175, ../sass/screen.scss */
 form {
-  display: block;
+  display: none;
   position: absolute;
   top: 0;
   left: 0;
@@ -285,7 +285,7 @@ form input.word {
 /*    REPORT     */
 /* line 199, ../sass/screen.scss */
 #report {
-  display: none;
+  display: block;
   position: absolute;
   top: -5000;
   left: 0;
@@ -298,7 +298,7 @@ form input.word {
 #report .container {
   position: relative;
   width: 80%;
-  margin: 0 auto;
+  margin: 25px auto 0 auto;
   padding: 25px;
   background-color: #34495e;
 }
@@ -324,7 +324,7 @@ form input.word {
 }
 /* line 235, ../sass/screen.scss */
 #report .container .step .nodeName {
-  color: #95a5a6;
+  color: white;
   font-size: 42px;
   line-height: 100px;
 }

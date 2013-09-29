@@ -1,7 +1,7 @@
 var InputManager = {
 	HOST: "http://192.168.66.26:9000",
 	QUERY_URL: "query",
-	MAX_NODES_PER_QUERY: 8,
+	MAX_NODES_PER_QUERY: 15,
 
 	init: function(){
 		// TOOD : pendant les tests, on ne déclanche l'affichage du

@@ -42,7 +42,9 @@ var ReportManager = {
 	summarizeBrainstorm: function(){
 		if (GraphManager.theGraph.nodes.length > 0) {
 			var html = ReportManager.generateReportFromGraph(GraphManager.theGraph);
-			ReportManager.fillReport(html);
+			if ($("#report .step").length <= 0)
+				ReportManager.fillReport(html);
+			ReportManager.showReport();
 		}
 	},
 	fillReport: function(html){
@@ -52,15 +54,17 @@ var ReportManager = {
 	showReport: function(){
 		$("#report").animate({
 			"top": 0,
-			"bottom": 0
-		}).fadeIn();
+			"bottom": 0,
+			"opacity": 1
+		});
 	},
 	hideReport: function(){
 		console.log("Closing");
 		$("#report").animate({
 			"top": -window.innerHeight,
-			"bottom": +window.innerHeight
-		}).fadeOut();
+			"bottom": +window.innerHeight,
+			"opacity": 0
+		});
 	}
 };
 
