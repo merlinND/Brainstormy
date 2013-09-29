@@ -8,14 +8,27 @@ var GraphFactory = {
 	create: function() {
 		return {
 			nodes: [],
+			rootId: null,
 
 			// Méthode : ajout d'un noeud au graphe
 			addNode: function(node) {
 				// Le noeud est enregistré à l'index correspondant à son id
 				this.nodes[node.id] = node;
 
+				// S'il n'y avait aucun noeud avant celui-ci, il devient la racine
+				if (this.rootId === null)
+					this.rootId = node.id;
+
 				// Pour pouvoir faire des appels chaînés (à la jQuery)
 				return this;
+			},
+			// Méthode : récupérer un noeud du graphe par son id
+			get: function(nodeId) {
+				return this.nodes[nodeId];
+			},
+			// Méthode : récupérer un noeud du graphe par son id
+			getRoot: function(nodeId) {
+				return this.get(this.rootId);
 			}
 		};
 	}
@@ -53,62 +66,54 @@ var NodeFactory = {
 	}
 };
 
-var theGraph = null;
 
+var GraphManager = {
+	theGraph: GraphFactory.create(),
 
-(function($){
-	
+	init: function(){
+		this.theGraph = this.createSampleGraph();
+		console.log(">> Unicorns!");
+	},
+
 	/*
 	 * PARCOURS DU GRAPHE
 	 */
-	function goThroughGraph(graph){
-		var nodes = graph.nodes;
+	goThroughGraph: function(graph){
+		var rootNode = graph.getRoot();
 
 		// On place la racine
-		ViewManager.drawNode(ViewManager.ORIGIN, nodes[0]);
+		ViewManager.drawNode(ViewManager.ORIGIN, this.theGraph.getRoot());
 
 		// Et on lance le parcourt récursif
-		if (nodes.length > 0)
-			displayGraphFromNode(nodes[0], null, nodes, 0);
+		if (graph.nodes.length > 0)
+			this.displayGraphFromNode(this.theGraph.getRoot(), null, graph, 0);
 		else
 			console.log("Le graphe passé est vide.");
-	}
-	function displayGraphFromNode(currentNode, parent, nodes, depth){
+	},
+	displayGraphFromNode: function(currentNode, parent, graph, depth){
 		// Pour chaque arrête partant de ce noeud
 		var childrenNodes = [];
 		for (var j in currentNode.edges){
 			var edge = currentNode.edges[j];
 			// On récupère l'objet node qui représente la cible de cette connexion
-			var targetNode = nodes[edge.to];
+			var targetNode = graph.get(edge.to);
 			targetNode.parentId = currentNode.id;
+			targetNode.relevance = edge.relevance;
 			// On l'ajoute à la liste des enfants
 			childrenNodes.push(targetNode);
 		}
 
 		// On affiche tous les noeuds de ce niveau
-		ViewManager.drawNodesAround(childrenNodes, currentNode);
+		ViewManager.drawNodesAround(childrenNodes, currentNode, depth);
 
 		for (var k in childrenNodes){
 			var child = childrenNodes[k];
 			// On parcourt récursivement la suite du graphe à partir de cet enfant
-			displayGraphFromNode(child, currentNode, nodes, depth+1);
+			GraphManager.displayGraphFromNode(child, currentNode, graph, depth+1);
 		}
-	}
+	},
 
-	/*
-	 * TEST DES STRUCTURES DE DONNEES
-	 */
-	$(document).ready(function(){
-		init();
-		goThroughGraph(theGraph);
-	});
-
-	function init(){
-		theGraph = createSampleGraph();
-		console.log(">> Unicorns!");
-	}
-
-	function createSampleGraph(){
+	createSampleGraph: function(){
 		var graph = GraphFactory.create();
 
 		graph.addNode(NodeFactory.create(0, "pet").addEdge(1, 1).addEdge(2, 0.8).addEdge(3, 0.3))
@@ -119,10 +124,23 @@ var theGraph = null;
 			.addNode(NodeFactory.create(5, "fluffy"))
 			.addNode(NodeFactory.create(6, "cute").addEdge(41, 0.5).addEdge(42, 1))
 			.addNode(NodeFactory.create(41, "baby"))
-			.addNode(NodeFactory.create(42, "unicorn"));
+			.addNode(NodeFactory.create(42, "unicorn").addEdge(43, 0.5).addEdge(44, 1).addEdge(45, 0.5).addEdge(46, 1))
+			.addNode(NodeFactory.create(43, "pink"))
+			.addNode(NodeFactory.create(44, "awesome").addEdge(47, 1).addEdge(48, 1).addEdge(49, 1))
+			.addNode(NodeFactory.create(45, "horse"))
+			.addNode(NodeFactory.create(46, "smile"))
+			.addNode(NodeFactory.create(47, "Henri"))
+			.addNode(NodeFactory.create(48, "Vadim"))
+			.addNode(NodeFactory.create(49, "Merlin"));
 
 		return graph;
 	}
+};
 
-})(jQuery);
-
+/*
+ * TEST DES STRUCTURES DE DONNEES
+ */
+$(document).ready(function(){
+	GraphManager.init();
+	GraphManager.goThroughGraph(GraphManager.theGraph);
+});

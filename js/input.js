@@ -18,7 +18,7 @@ $.QUERY_URL = "query";
 			if (e.target.nodeName != "INPUT")
 				toggleInputForm();
 		});
-		$("#startingPoint").parent("form").on("submit", startSubmit);
+		$("#startingPoint").parent("form").on("submit", inputSubmit);
 	}
 
 })(jQuery);
@@ -33,7 +33,7 @@ function toggleInputForm() {
 	}
 }
 
-function startSubmit(e) {
+function inputSubmit(e) {
 	e.preventDefault();
 	$(e.target).fadeOut();
 	
@@ -75,7 +75,6 @@ function queryServer(node) {
 
 			// TODO : déclancher l'affichage des nouveaux noeuds et liens
 			var centralNode = node;
-
 			ViewManager.drawNodesAround(nodes, centralNode, ViewManager.DEFAULT_RADIUS);
 		},
 		error: function(json){

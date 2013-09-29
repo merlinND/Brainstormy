@@ -3,22 +3,22 @@ var flatColors = {
     "emerald": "#2ecc71",
     "peter-river": "#3498db",
     "amethyst": "#9b59b6",
-    "wet-asphalt": "#34495e",
-    "green-sea": "#16a085",
-    "nephritis": "#27ae60",
-    "belize-hole": "#2980b9",
-    "wisteria": "#8e44ad",
-    "midnight-blue": "#2c3e50",
     "sun-flower": "#f1c40f",
     "carrot": "#e67e22",
     "alizarin": "#e74c3c",
     "clouds": "#ecf0f1",
     "concrete": "#95a5a6",
+    "green-sea": "#16a085",
+    "nephritis": "#27ae60",
+    "belize-hole": "#2980b9",
+    "wisteria": "#8e44ad",
     "orange": "#f39c12",
     "pumpkin": "#d35400",
     "pomegranate": "#c0392b",
     "silver": "#bdc3c7",
-    "asbestos": "#7f8c8d"
+    "asbestos": "#7f8c8d",
+    "wet-asphalt": "#34495e",
+    "midnight-blue": "#2c3e50"
 };
 // TODO : changer l'ordre pour qu'il y ait une alternance sympathique
 var flatColorsNum = [
@@ -26,22 +26,23 @@ var flatColorsNum = [
     "#2ecc71",
     "#3498db",
     "#9b59b6",
-    "#34495e",
-    "#16a085",
-    "#27ae60",
-    "#2980b9",
-    "#8e44ad",
-    "#2c3e50",
     "#f1c40f",
     "#e67e22",
     "#e74c3c",
     "#ecf0f1",
     "#95a5a6",
+    "#16a085",
+    "#27ae60",
+    "#2980b9",
+    "#8e44ad",
     "#f39c12",
     "#d35400",
     "#c0392b",
     "#bdc3c7",
     "#7f8c8d"
+    // Couleurs trop proches du background
+    //"#34495e",
+    //"#2c3e50"
 ];
 
 var ViewManager = {
@@ -68,7 +69,7 @@ var ViewManager = {
     /*********** Creating custom Map Type **************/
 
     initializeMap: function() {
-        this.DEFAULT_ORBIT = (this.MAX_RADIUS) / 30000;
+        this.DEFAULT_ORBIT = (this.MAX_RADIUS) / 20000;
 
         var graphTypeOptions = {
                 getTileUrl: function(coord, zoom) {
@@ -91,34 +92,13 @@ var ViewManager = {
             }
         };
 
-        MAP = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
-        MAP.mapTypes.set('graph', graphMapType);
-        MAP.setMapTypeId('graph');
-       
-        
-        // var originNode = NodeFactory.create(0, "pet"),
-        //     allNodes = [
-        //         theGraph.nodes[1],
-        //         theGraph.nodes[2],
-        //         theGraph.nodes[3]
-        //     ],
-        //     secondNodes = [
-        //         NodeFactory.create(6, "dog"),
-        //         NodeFactory.create(7, "cat"),
-        //         NodeFactory.create(8, "snake"),
-        //         NodeFactory.create(9, "racoon"),
-        //         NodeFactory.create(10, "python")
-        //     ];
-        // console.log(theGraph);
-        // this.drawNode(this.ORIGIN, theGraph.nodes[0]);
-        // this.drawNodesAround(allNodes, theGraph.nodes[0]);
-        // On affiche un deuxième tour de test
-        //allNodes[1].parentId = 2;
-        //this.drawNodesAround(secondNodes, allNodes[1], this.DEFAULT_ORBIT / 1.7);
+        this.map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+        this.map.mapTypes.set('graph', graphMapType);
+        this.map.setMapTypeId('graph');
     },
 
     
-    /******* Drawing functions ****/
+    /******* GRAPH DRAWING FUNCTIONS ****/
     
     /**
      * Draw the circle of the node
@@ -135,17 +115,22 @@ var ViewManager = {
             strokeWeight: 0,
             fillColor: color,
             fillOpacity: 1,
-            map: MAP,
+            map: this.map,
             center: center,
             radius: radius
         };
 
-        return new google.maps.Circle(CircleOptions);
+        var circle = new google.maps.Circle(CircleOptions);
+
+        // On ajoute un listener pour le clic sur ce cercle
+        google.maps.event.addDomListener(circle, 'click', this.clickListener);
+
+        return circle;
     },
     
     drawTextOverlay: function(center, string) {
         var mapLabelOption = {
-            fontSize : MAP.getZoom(),
+            fontSize : this.map.getZoom(),
             fontColor : "#FFFFFF",
             fontFamily : 'verdana',
             minZoom : 16,
@@ -158,14 +143,15 @@ var ViewManager = {
         };
         
         var label = new MapLabel(mapLabelOption);         
-       
-        return label;
+        label.setMap(this.map);
     },
     
-    drawNode: function(center, node){
-        
+    drawNode: function(center, node, depth){
+        if (depth === undefined || depth === null)
+            depth = 0;
+
         var string = node.word;
-        var color = flatColorsNum[this.deepestNodeLevel % flatColorsNum.length];
+        var color = flatColorsNum[depth % flatColorsNum.length];
         var radius = node.relevance * this.MAX_RADIUS;
         
         node.view.circle = this.drawCircle(center, radius, color);
@@ -177,23 +163,29 @@ var ViewManager = {
         return node;
     },
     
-    drawNodesAround: function(nodes, centerNode, globalRadius) {
+    drawNodesAround: function(nodes, centerNode, depth, globalRadius) {
         if (globalRadius === null || globalRadius === undefined)
             globalRadius = this.DEFAULT_ORBIT;
 
         var ancestorPosition = new google.maps.LatLng(-0.001, 0.000);
         if (centerNode.parentId !== null && centerNode.parentId !== undefined) {
-            ancestorPosition = theGraph.nodes[centerNode.parentId].position;
+            ancestorPosition = GraphManager.theGraph.get(centerNode.parentId).position;
         }
 
         var center = centerNode.position;
 
-        var maxAngle = (3/2) * Math.PI,
-            ancestorOffset = Math.PI - getHeading(ancestorPosition, center),
+        // L'angle total parcouru est grand quand on a beaucoup de noeuds
+        var maxAngle = (3/2) * Math.PI;
+        // Mais quand on en a deux ou trois, on fait plus petit
+        if (nodes.length <= 4)
+            maxAngle = (2/3) * Math.PI;
+
+
+        var ancestorOffset = Math.PI - getHeading(ancestorPosition, center),
             angularOffset = ((2*Math.PI) - maxAngle) / 2 - ancestorOffset;
 
         var theta = ancestorOffset / Math.PI;
-        console.log("Le heading de " + ancestorPosition + " à " + center + " est " + theta + " pi");
+        //console.log("Le heading de " + ancestorPosition + " à " + center + " est " + theta + " pi");
 
         // On va décrire un grand cercle,
         // et placer les marqueurs à intervalle régulier
@@ -207,7 +199,7 @@ var ViewManager = {
                 dLng = globalRadius * Math.cos(progress * maxAngle + angularOffset);
             
             var thisCenter = new google.maps.LatLng(lat + dLat, lng + dLng);
-            this.drawNode(thisCenter, nodes[i]);
+            this.drawNode(thisCenter, nodes[i], depth);
 
             // On dessine également la connexion entre ce noeud et son parent
             this.drawEdge(centerNode, nodes[i]);
@@ -216,17 +208,14 @@ var ViewManager = {
 
         // On dézoom la map afin de voir au moins globalRadius
         // TODO : zoom intelligent ? Ou bien zoom statique bien choisi
-        MAP.setZoom(this.MAX_ZOOM - 3);
-        
-
-        this.deepestNodeLevel++;
+        this.map.setZoom(this.MAX_ZOOM - 4);
     },
     
     drawEdge: function(node1, node2) {
         
         var polyLineOption = {
             path : [node1.position, node2.position],
-            map : MAP,
+            map : this.map,
             strokeWeight : 2,
             strokeColor : '#FFFFFF',
             strokeOpacity : 1.0,
@@ -267,8 +256,13 @@ var ViewManager = {
     },
     moveCircleTo: function(circle, position) {
         circle.setCenter(position);
-    }
+    },
 
+
+    /******* INTERACTION FUNCTIONS ****/
+    clickListener: function(e) {
+        this.map.panTo(e.latLng);
+    }
 };
 
 
