@@ -6,7 +6,7 @@ var InputManager = {
 	init: function(){
 		// TOOD : pendant les tests, on ne déclanche l'affichage du
 		// input que lors d'un clic sur le <h1>
-		$("header h1, form").on("click", function(e){
+		$("header button").on("click", function(e){
 			e.stopPropagation();
 
 			if (e.target.nodeName != "INPUT")
@@ -61,7 +61,9 @@ var InputManager = {
 				callback(json);
 			},
 			error: function(json){
+				$("header h1").removeClass("pulsing");
 				console.log("Erreur pour charger la page : " + json.responseText);
+
 				$("#dump").html($("#dump").html() + "Erreur serveur <strong>" + json.responseText + "</strong>");
 				InputManager.cleanDump();
 			}

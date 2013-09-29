@@ -87,16 +87,16 @@ body
 		margin: 10px 0;
 		color: #05af0d;
 		text-align: center;
-	}
-	
-	// Animation de clignottement (waiter chargement)
+	}	
 	.pulsing {
-		@include animation (thePulse 1s infinite ease);
+		@include animation (thePulse 1.5s infinite ease);
 	}
-	@include keyframes(thePulse) {
-		0%, 100% { opacity: 1 }
-		50% { opacity: 0.35 }
-	}
+}
+
+// Animation de clignottement (waiter chargement)
+@include keyframes(thePulse) {
+	0%, 100% { opacity: 1 }
+	50% { opacity: 0.2 }
 }
 
 /* ************* */
@@ -110,7 +110,28 @@ header
 
 	h1
 	{
-		margin: 15px 0 0 100px;
+		display: block;
+		width: auto;
+		margin: 10px 0 0 15px;
+		float: left;
+	}
+	button
+	{
+		display: block;
+		width: 50px; height: 50px;
+		margin: 12px 0 0 45px;
+		float: left;
+
+		border: none;
+		font-size: 40px;
+		line-height: 30px;
+		color: $backgroundColor;
+		background-color: $fontColor;
+
+		&:hover
+		{
+			cursor: pointer;
+		}
 	}
 }
 
@@ -145,6 +166,8 @@ header
 /*   USER INPUT  */
 form
 {
+	display: block;
+
 	position: absolute;
 	top: 0; left: 0; bottom: 0; right: 0;
 	z-index: 500;

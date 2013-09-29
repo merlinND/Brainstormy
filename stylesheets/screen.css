@@ -83,66 +83,6 @@ body {
   font-size: 18px;
   font-family: "Lucida Grande", Helvetica, Arial, sans-serif;
   color: #27ae60;
-  @-moz-keyframes thePulse {
-    /* line 97, ../sass/screen.scss */
-    0%, 100% {
-      opacity: 1;
-    }
-
-    /* line 98, ../sass/screen.scss */
-    50% {
-      opacity: 0.35;
-    }
-}
-
-  @-webkit-keyframes thePulse {
-    /* line 97, ../sass/screen.scss */
-    0%, 100% {
-      opacity: 1;
-    }
-
-    /* line 98, ../sass/screen.scss */
-    50% {
-      opacity: 0.35;
-    }
-}
-
-  @-o-keyframes thePulse {
-    /* line 97, ../sass/screen.scss */
-    0%, 100% {
-      opacity: 1;
-    }
-
-    /* line 98, ../sass/screen.scss */
-    50% {
-      opacity: 0.35;
-    }
-}
-
-  @-ms-keyframes thePulse {
-    /* line 97, ../sass/screen.scss */
-    0%, 100% {
-      opacity: 1;
-    }
-
-    /* line 98, ../sass/screen.scss */
-    50% {
-      opacity: 0.35;
-    }
-}
-
-  @keyframes thePulse {
-    /* line 97, ../sass/screen.scss */
-    0%, 100% {
-      opacity: 1;
-    }
-
-    /* line 98, ../sass/screen.scss */
-    50% {
-      opacity: 0.35;
-    }
-}
-
 }
 /* line 59, ../sass/screen.scss */
 body h1, body h2, body h3, body h4, body h5, body h6 {
@@ -176,13 +116,73 @@ body .success {
   color: #05af0d;
   text-align: center;
 }
-/* line 93, ../sass/screen.scss */
+/* line 91, ../sass/screen.scss */
 body .pulsing {
-  -webkit-animation: thePulse 1s infinite ease;
-  -moz-animation: thePulse 1s infinite ease;
-  -ms-animation: thePulse 1s infinite ease;
-  -o-animation: thePulse 1s infinite ease;
-  animation: thePulse 1s infinite ease;
+  -webkit-animation: thePulse 1.5s infinite ease;
+  -moz-animation: thePulse 1.5s infinite ease;
+  -ms-animation: thePulse 1.5s infinite ease;
+  -o-animation: thePulse 1.5s infinite ease;
+  animation: thePulse 1.5s infinite ease;
+}
+
+@-moz-keyframes thePulse {
+  /* line 98, ../sass/screen.scss */
+  0%, 100% {
+    opacity: 1;
+  }
+
+  /* line 99, ../sass/screen.scss */
+  50% {
+    opacity: 0.2;
+  }
+}
+
+@-webkit-keyframes thePulse {
+  /* line 98, ../sass/screen.scss */
+  0%, 100% {
+    opacity: 1;
+  }
+
+  /* line 99, ../sass/screen.scss */
+  50% {
+    opacity: 0.2;
+  }
+}
+
+@-o-keyframes thePulse {
+  /* line 98, ../sass/screen.scss */
+  0%, 100% {
+    opacity: 1;
+  }
+
+  /* line 99, ../sass/screen.scss */
+  50% {
+    opacity: 0.2;
+  }
+}
+
+@-ms-keyframes thePulse {
+  /* line 98, ../sass/screen.scss */
+  0%, 100% {
+    opacity: 1;
+  }
+
+  /* line 99, ../sass/screen.scss */
+  50% {
+    opacity: 0.2;
+  }
+}
+
+@keyframes thePulse {
+  /* line 98, ../sass/screen.scss */
+  0%, 100% {
+    opacity: 1;
+  }
+
+  /* line 99, ../sass/screen.scss */
+  50% {
+    opacity: 0.2;
+  }
 }
 
 /* ************* */
@@ -198,12 +198,32 @@ header {
 }
 /* line 112, ../sass/screen.scss */
 header h1 {
-  margin: 15px 0 0 100px;
+  display: block;
+  width: auto;
+  margin: 10px 0 0 15px;
+  float: left;
+}
+/* line 119, ../sass/screen.scss */
+header button {
+  display: block;
+  width: 50px;
+  height: 50px;
+  margin: 12px 0 0 45px;
+  float: left;
+  border: none;
+  font-size: 40px;
+  line-height: 30px;
+  color: #2c3e50;
+  background-color: #27ae60;
+}
+/* line 132, ../sass/screen.scss */
+header button:hover {
+  cursor: pointer;
 }
 
 /* ************* */
 /*    THE MAP    */
-/* line 121, ../sass/screen.scss */
+/* line 142, ../sass/screen.scss */
 #map-canvas {
   position: absolute;
   top: 0;
@@ -213,7 +233,7 @@ header h1 {
   z-index: 10;
 }
 
-/* line 127, ../sass/screen.scss */
+/* line 148, ../sass/screen.scss */
 #dump {
   display: block;
   position: absolute;
@@ -226,7 +246,7 @@ header h1 {
   color: #e67e22;
 }
 @media (max-width: 500px) {
-  /* line 127, ../sass/screen.scss */
+  /* line 148, ../sass/screen.scss */
   #dump {
     background-color: #e74c3c;
   }
@@ -234,8 +254,9 @@ header h1 {
 
 /* ************* */
 /*   USER INPUT  */
-/* line 147, ../sass/screen.scss */
+/* line 168, ../sass/screen.scss */
 form {
+  display: block;
   position: absolute;
   top: 0;
   left: 0;
@@ -244,7 +265,7 @@ form {
   z-index: 500;
   background-color: rgba(0, 0, 0, 0.8);
 }
-/* line 154, ../sass/screen.scss */
+/* line 177, ../sass/screen.scss */
 form input.word {
   display: block;
   width: 60%;
