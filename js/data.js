@@ -144,26 +144,18 @@ var GraphManager = {
 	},
 
 	extendGraph: function(rootNode, newNodes){
-		if (newNodes.length > 1) {
-			// On ajoute chacun des nouveaux noeuds au graphe
-			for(var i in newNodes){
-				var thisNode = newNodes[i];
+		// On ajoute chacun des nouveaux noeuds au graphe
+		for(var i in newNodes){
+			var thisNode = newNodes[i];
 
-				// On restaure la position sous forme d'objet LatLng
-				if (thisNode.position !== undefined && thisNode.position !== null)
-					thisNode.position = new google.maps.LatLng(thisNode.position.nb, thisNode.position.ob);
+			// On restaure la position sous forme d'objet LatLng
+			if (thisNode.position !== undefined && thisNode.position !== null)
+				thisNode.position = new google.maps.LatLng(thisNode.position.nb, thisNode.position.ob);
 
-				GraphManager.theGraph.addNode(thisNode);
-			}
-
-			GraphManager.applyFunctionRecursively(ViewManager.drawNodesAround, rootNode, GraphManager.theGraph.get(rootNode.parentId), GraphManager.theGraph, rootNode.depth + 1);
+			GraphManager.theGraph.addNode(thisNode);
 		}
-		else {
-			console.log("Pas de nouveaux résultats à partir du noeud " + rootNode.word);
-			InputManager.showError("Aucun résultat pour le mot <strong>" + rootNode.word + "</strong>");
 
-			InputManager.cleanDump();
-		}
+		GraphManager.applyFunctionRecursively(ViewManager.drawNodesAround, rootNode, GraphManager.theGraph.get(rootNode.parentId), GraphManager.theGraph, rootNode.depth + 1);
 	},
 
 	createSampleGraph: function(){

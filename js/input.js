@@ -1,7 +1,7 @@
 var InputManager = {
 	HOST: "http://192.168.66.26:9000",
 	QUERY_URL: "query",
-	MAX_NODES_PER_QUERY: 15,
+	MAX_NODES_PER_QUERY: 10,
 
 	init: function(){
 		// TOOD : pendant les tests, on ne déclanche l'affichage du
@@ -82,7 +82,14 @@ var InputManager = {
 		var queryNode = GraphManager.theGraph.get(json.queryNode.id);
 		queryNode.edges = json.edges;
 
-		GraphManager.extendGraph(queryNode, json.newNodes);
+		if (json.newNodes.length > 0)
+			GraphManager.extendGraph(queryNode, json.newNodes);
+		else {
+			console.log("Pas de nouveaux résultats à partir du noeud " + rootNode.word);
+			InputManager.showError("Aucun résultat pour le mot <strong>" + rootNode.word + "</strong>");
+
+			InputManager.cleanDump();
+		}
 	},
 
 	// Callback appelé lorsqu'on construit un nouveau graphe suite à une requête
