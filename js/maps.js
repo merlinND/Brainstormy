@@ -46,12 +46,17 @@ var flatColorsNum = [
 ];
 
 var ViewManager = {
-    map: null,
+    
+    
+    MAP: null,
     MAX_ZOOM: 20,
     ORIGIN: new google.maps.LatLng(0, 0),
 
     MAX_RADIUS: 60,
     DEFAULT_ORBIT: null,
+    DEFAULT_FONT_SIZE: 22,
+    
+    deepestNodeLevel: 0,
 
 
     init: function() {
@@ -132,8 +137,10 @@ var ViewManager = {
             minZoom : 16,
             maxZoom : this.MAX_ZOOM,
             text : string,
+            map : this.map,
             position : new google.maps.LatLng(center.lat() + 0.00005, center.lng()),
-            strokeWeight : 1
+            strokeWeight : 1,
+            zIndex:1001
         };
         
         var label = new MapLabel(mapLabelOption);         
@@ -148,12 +155,11 @@ var ViewManager = {
         var color = flatColorsNum[depth % flatColorsNum.length];
         var radius = node.relevance * this.MAX_RADIUS;
         
-        this.drawCircle(center, radius, color, node.id);
-        this.drawTextOverlay(center, string);
+        node.view.circle = this.drawCircle(center, radius, color, node.id);
+        node.view.label =  this.drawTextOverlay(center, string);
         
         // On enregistre la position du node dans celui-ci
         node.position = center;
-
         return node;
     },
     
@@ -200,6 +206,7 @@ var ViewManager = {
 
             // On dessine également la connexion entre ce noeud et son parent
             this.drawEdge(centerNode, nodes[i]);
+            
         }
 
         // On dézoom la map afin de voir au moins globalRadius
@@ -259,13 +266,15 @@ var ViewManager = {
     clickListener: function(e, nodeId) {
         var clickedNode = GraphManager.theGraph.get(nodeId);
         this.map.panTo(e.latLng);
-
+        
         // On déploie à partir de cette feuille,
         // mais seulement si c'est est une
         if (clickedNode.edges.length <= 0)
             InputManager.queryServerWithNode(clickedNode, GraphManager.extendGraph);
     }
 };
+
+
 
 
 /**
@@ -319,3 +328,5 @@ function getHeading(position1, position2) {
     // En radians
     return heading;
 }
+
+    
