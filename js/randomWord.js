@@ -1,28 +1,29 @@
+var allRandomWords = [];
 function RandomWord() {
-        var requestStr = "http://randomword.setgetgo.com/get.php";
+    var requestStr = "http://randomword.setgetgo.com/get.php";
 
-        $.ajax({
-            type: "GET",
-            url: requestStr,
-            dataType: "jsonp",
-            jsonpCallback: 'RandomWordComplete'
-        });
-    }
+    $.ajax({
+        type: "GET",
+        url: requestStr,
+        dataType: "jsonp",
+        jsonpCallback: 'RandomWordComplete'
+    });
+}
 
-    function RandomWordComplete(data) {
-        return data.Word;
-    }
-
-
-$(document).ready(function() {
-    RandomWord();
-});
+function RandomWordComplete(data) {
+    allRandomWords.push(data.Word);
+}
 
 function getRandomWord(nb) {
-    var list = [];
     for(var i = 0; i < nb; i++) {
-        list.push(RandomWord());
+        console.log("On lance une requete.");
+        RandomWord();
     }
-    
-    return list;
 }
+
+$(document).ready(function() {
+    console.log("On devrait être ready");
+    //getRandomWord(10);
+
+});
+

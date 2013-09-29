@@ -347,7 +347,7 @@ var ViewManager = {
         // On déploie à partir de cette feuille,
         // mais seulement si c'est est une
         if (clickedNode.edges.length <= 0) {
-            console.log(ViewManager.EDGES);
+            //console.log(ViewManager.EDGES);
             InputManager.queryServerWithNode(clickedNode, GraphManager.extendGraph);
             var circle = null;
             var label = null;

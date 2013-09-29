@@ -51,6 +51,8 @@ var InputManager = {
 		console.log("On fait un envoi au serveur : " + JSON.stringify(query));
 		$("header h1").addClass("pulsing");
 
+		console.log(allRandomWords);
+
 		// TODO : envoyer le mot au serveur
 		$.ajax({
 			url: this.HOST + '/' + this.QUERY_URL + "/",
