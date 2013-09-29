@@ -47,7 +47,8 @@ var flatColorsNum = [
 var ViewManager = {
     MAP: null,
     MAX_ZOOM: 20,
-    
+    ORIGIN: new google.maps.LatLng(0, 0),
+
     MAX_RADIUS: 60,
     DEFAULT_ORBIT: null, 
 
@@ -76,10 +77,9 @@ var ViewManager = {
                 name: 'Graph'
             },
             graphMapType = new google.maps.ImageMapType(graphTypeOptions),
-            originPosition = new google.maps.LatLng(0, 0);
             
             mapOptions = {
-                center: originPosition,
+                center: this.ORIGIN,
                 zoom: this.MAX_ZOOM,
                 streetViewControl: false,
                 mapTypeControlOptions: {
@@ -91,26 +91,25 @@ var ViewManager = {
         MAP.mapTypes.set('graph', graphMapType);
         MAP.setMapTypeId('graph');
         
-        var originNode = NodeFactory.create(0, "pet"),
-            allNodes = [
-                NodeFactory.create(1, "dog"),
-                NodeFactory.create(2, "cat"),
-                NodeFactory.create(3, "snake"),
-                NodeFactory.create(4, "racoon"),
-                NodeFactory.create(5, "python")
-            ],
-            secondNodes = [
-                NodeFactory.create(6, "dog"),
-                NodeFactory.create(7, "cat"),
-                NodeFactory.create(8, "snake"),
-                NodeFactory.create(9, "racoon"),
-                NodeFactory.create(10, "python")
-            ];
-        
-        this.drawNode(originPosition, originNode);
-        this.drawNodesAround(allNodes, originNode);
+        // var originNode = NodeFactory.create(0, "pet"),
+        //     allNodes = [
+        //         theGraph.nodes[1],
+        //         theGraph.nodes[2],
+        //         theGraph.nodes[3]
+        //     ],
+        //     secondNodes = [
+        //         NodeFactory.create(6, "dog"),
+        //         NodeFactory.create(7, "cat"),
+        //         NodeFactory.create(8, "snake"),
+        //         NodeFactory.create(9, "racoon"),
+        //         NodeFactory.create(10, "python")
+        //     ];
+        // console.log(theGraph);
+        // this.drawNode(this.ORIGIN, theGraph.nodes[0]);
+        // this.drawNodesAround(allNodes, theGraph.nodes[0]);
         // On affiche un deuxième tour de test
-        this.drawNodesAround(secondNodes, allNodes[1], this.DEFAULT_ORBIT / 1.7, allNodes[1].position);
+        //allNodes[1].parentId = 2;
+        //this.drawNodesAround(secondNodes, allNodes[1], this.DEFAULT_ORBIT / 1.7);
     },
 
     
@@ -170,17 +169,23 @@ var ViewManager = {
         return node;
     },
     
-    drawNodesAround: function(nodes, centerNode, globalRadius, ancestorPosition) {
-        if (ancestorPosition === null || ancestorPosition === undefined)
-            ancestorPosition = new google.maps.LatLng(-0.001, 0.000);
+    drawNodesAround: function(nodes, centerNode, globalRadius) {
         if (globalRadius === null || globalRadius === undefined)
             globalRadius = this.DEFAULT_ORBIT;
+
+        var ancestorPosition = new google.maps.LatLng(-0.001, 0.000);
+        if (centerNode.parentId !== null && centerNode.parentId !== undefined) {
+            ancestorPosition = theGraph.nodes[centerNode.parentId].position;
+        }
 
         var center = centerNode.position;
 
         var maxAngle = (3/2) * Math.PI,
             ancestorOffset = Math.PI - getHeading(ancestorPosition, center),
             angularOffset = ((2*Math.PI) - maxAngle) / 2 - ancestorOffset;
+
+        var theta = ancestorOffset / Math.PI;
+        console.log("Le heading de " + ancestorPosition + " à " + center + " est " + theta + " pi");
 
         // On va décrire un grand cercle,
         // et placer les marqueurs à intervalle régulier

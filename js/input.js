@@ -60,12 +60,15 @@ function queryServer(node) {
 		success: function(json){
 			console.log("Succès de la requête vers le serveur :");
 
+			// TODO : faire tout ça côté serveur
 			// TODO : enregistrer la relevance dans les nodes eux-même
 			for(var i in json){
 				var thisNode = json[i];
 				if (thisNode.relevance === undefined)
 					// TODO : remplacer par la vraie valeur
 					thisNode.relevance = 1;
+				if (thisNode.parent === null)
+					thisNode.parent = node;
 			}
 
 			console.log(json);
@@ -73,7 +76,7 @@ function queryServer(node) {
 			// TODO : déclancher l'affichage des nouveaux noeuds et liens
 			var centralNode = node;
 
-			ViewManager.drawNodesAround(nodes, centralNode, ViewManager.DEFAULT_RADIUS, centralNode.position);
+			ViewManager.drawNodesAround(nodes, centralNode, ViewManager.DEFAULT_RADIUS);
 		},
 		error: function(json){
 			console.log("Erreur pour charger la page : " + json.responseText);

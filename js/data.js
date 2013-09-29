@@ -33,6 +33,7 @@ var NodeFactory = {
 			word: newWord,
 			edges: newEdges,
 			relevance: 1,
+			parentId: null,
 
 			// Méthode : ajouter une nouvelle arrête au noeud
 			addEdge: function(whereTo, newRelevance) {
@@ -48,6 +49,8 @@ var NodeFactory = {
 	}
 };
 
+var theGraph = null;
+
 
 (function($){
 	
@@ -57,57 +60,35 @@ var NodeFactory = {
 	function goThroughGraph(graph){
 		var nodes = graph.nodes;
 
+		// On place la racine
+		ViewManager.drawNode(ViewManager.ORIGIN, nodes[0]);
+
+		// Et on lance le parcourt récursif
 		if (nodes.length > 0)
 			displayGraphFromNode(nodes[0], null, nodes, 0);
 		else
 			console.log("Le graphe passé est vide.");
 	}
 	function displayGraphFromNode(currentNode, parent, nodes, depth){
-		// On affiche le noeud en cours
-		if (currentNode.position === undefined){
-			displayNode(currentNode, nodes, depth);
-		}
-
 		// Pour chaque arrête partant de ce noeud
+		var childrenNodes = [];
 		for (var j in currentNode.edges){
 			var edge = currentNode.edges[j];
-
 			// On récupère l'objet node qui représente la cible de cette connexion
 			var targetNode = nodes[edge.to];
-			// On affiche récursivement la suite du graphe à partir de cette cible
-			displayGraphFromNode(targetNode, currentNode, nodes, depth+1);
-
-			// Et on dessine le lien entre le noeud courant et la cible
-			// TODO
+			targetNode.parentId = currentNode.id;
+			// On l'ajoute à la liste des enfants
+			childrenNodes.push(targetNode);
 		}
-	}
 
-	/*
-	 * AFFICHAGE
-	 * (à déplacer dans un module à part)
-	 */
-	function computeCoordinatesForNode(node, parent, nodes, depth){
-		var parentLat = Math.random(), //parent.position.lat,
-			parentLng = Math.random(); //parent.position.lng;
+		// On affiche tous les noeuds de ce niveau
+		ViewManager.drawNodesAround(childrenNodes, currentNode);
 
-
-
-		return { lat: Math.random(), lng: Math.random() };
-	}
-
-	function displayNode(node, graph, depth){
-		var representation = "";
-		if (depth > 0)
-			representation += "\n";
-		for (var i = 0; i < depth; i++){
-			representation += "    ";
+		for (var k in childrenNodes){
+			var child = childrenNodes[k];
+			// On parcourt récursivement la suite du graphe à partir de cet enfant
+			displayGraphFromNode(child, currentNode, nodes, depth+1);
 		}
-		representation += node.word;
-
-		// On enregistre les coordonnées auxquelles le noeud a été affiché
-		node.position = computeCoordinatesForNode(node, graph, depth);
-
-		$("#dump").text($("#dump").text() + representation);
 	}
 
 	/*
@@ -115,10 +96,11 @@ var NodeFactory = {
 	 */
 	$(document).ready(function(){
 		init();
-		goThroughGraph(createSampleGraph());
+		goThroughGraph(theGraph);
 	});
 
 	function init(){
+		theGraph = createSampleGraph();
 		console.log(">> Unicorns!");
 	}
 
