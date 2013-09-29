@@ -53,6 +53,8 @@ var ViewManager = {
     ORIGIN: new google.maps.LatLng(0, 0),
 
     MAX_RADIUS: 60,
+    HORIZONTAL_PADDING: 0.015,
+
     DEFAULT_ORBIT: null,
     DEFAULT_FONT_SIZE: 22,
     
@@ -203,6 +205,7 @@ var ViewManager = {
                 dLng = globalRadius * Math.cos(progress * maxAngle + angularOffset);
             
             var thisCenter = new google.maps.LatLng(lat + dLat, lng + dLng);
+            ViewManager.drawNode(thisCenter, nodes[i], depth);
 
             // On dessine également la connexion entre ce noeud et son parent
             ViewManager.drawEdge(centerNode, nodes[i]);
@@ -259,6 +262,30 @@ var ViewManager = {
     },
     moveCircleTo: function(circle, position) {
         circle.setCenter(position);
+    },
+
+
+    // Trouve une position libre pour commencer un nouveau graphe
+    getCozyPosition: function() {
+        // TODO : si le graphe est vide, aller direct à l'origine
+
+        // Par défaut, on va chercher à se caler à droite du noeud le plus à droite
+        // et au même niveau que la racine du premier graphe
+        var minLat = GraphManager.theGraph.getRoot().position.lat(),
+            maxLng = GraphManager.theGraph.getRoot().position.lng();
+
+        // On parcourt le graphe à la recherche de la position la plus à droite
+        GraphManager.applyFunctionRecursively(function(childrenNodes, currentNode, depth){
+            console.log(currentNode);
+            if (currentNode.position.lng() > maxLng)
+                maxLng = currentNode.position.lng();
+
+        }, GraphManager.theGraph.getRoot(), null, GraphManager.theGraph, 0);
+
+        var cozy = new google.maps.LatLng(minLat, maxLng + ViewManager.HORIZONTAL_PADDING);
+        console.log(cozy);
+
+        return cozy;
     },
 
 
