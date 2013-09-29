@@ -20,6 +20,7 @@ DATABASES = {
         'PORT': '',                      # Set to empty string for default.
     }
 }
+DBNAME = 'brainstorm'
 
 #NEO4J_DATABASES = {
     #'default' : {
