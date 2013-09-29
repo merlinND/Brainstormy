@@ -185,3 +185,41 @@ form
 		color: $fontColor;
 	}
 }
+
+/* ************* */
+/*    REPORT     */
+#report
+{
+	display: none;
+
+	position: absolute;
+	top: 0; left: 0; bottom: 0; right: 0;
+	z-index: 800;
+	background-color: $backgroundColor;
+
+	.container
+	{
+		width: 80%; height: 100%;
+		margin: 0 auto; padding: 0 25px;
+		background-color: $wet-asphalt;
+
+		.step
+		{
+			$stepHeight: 100px;
+
+			display: inline-block;
+			width: auto;
+			margin: 15px; padding: 25px 40px; 
+			height: $stepHeight;
+			text-align: center; 
+			background-color: $pumpkin;
+
+			.nodeName
+			{
+				color: $concrete;
+				font-size: 42px;
+				line-height: $stepHeight;
+			}
+		}
+	}
+}

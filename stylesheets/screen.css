@@ -275,3 +275,41 @@ form input.word {
   text-align: center;
   color: #27ae60;
 }
+
+/* ************* */
+/*    REPORT     */
+/* line 192, ../sass/screen.scss */
+#report {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  z-index: 800;
+  background-color: #2c3e50;
+}
+/* line 201, ../sass/screen.scss */
+#report .container {
+  width: 80%;
+  height: 100%;
+  margin: 0 auto;
+  padding: 0 25px;
+  background-color: #34495e;
+}
+/* line 207, ../sass/screen.scss */
+#report .container .step {
+  display: inline-block;
+  width: auto;
+  margin: 15px;
+  padding: 25px 40px;
+  height: 100px;
+  text-align: center;
+  background-color: #d35400;
+}
+/* line 218, ../sass/screen.scss */
+#report .container .step .nodeName {
+  color: #95a5a6;
+  font-size: 42px;
+  line-height: 100px;
+}
