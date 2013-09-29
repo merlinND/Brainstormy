@@ -77,12 +77,13 @@ var theGraph = null;
 			// On récupère l'objet node qui représente la cible de cette connexion
 			var targetNode = nodes[edge.to];
 			targetNode.parentId = currentNode.id;
+			targetNode.relevance = edge.relevance;
 			// On l'ajoute à la liste des enfants
 			childrenNodes.push(targetNode);
 		}
 
 		// On affiche tous les noeuds de ce niveau
-		ViewManager.drawNodesAround(childrenNodes, currentNode);
+		ViewManager.drawNodesAround(childrenNodes, currentNode, depth);
 
 		for (var k in childrenNodes){
 			var child = childrenNodes[k];
@@ -115,7 +116,14 @@ var theGraph = null;
 			.addNode(NodeFactory.create(5, "fluffy"))
 			.addNode(NodeFactory.create(6, "cute").addEdge(41, 0.5).addEdge(42, 1))
 			.addNode(NodeFactory.create(41, "baby"))
-			.addNode(NodeFactory.create(42, "unicorn"));
+			.addNode(NodeFactory.create(42, "unicorn").addEdge(43, 0.5).addEdge(44, 1).addEdge(45, 0.5).addEdge(46, 1))
+			.addNode(NodeFactory.create(43, "pink"))
+			.addNode(NodeFactory.create(44, "awesome").addEdge(47, 1).addEdge(48, 1).addEdge(49, 1))
+			.addNode(NodeFactory.create(45, "horse"))
+			.addNode(NodeFactory.create(46, "smile"))
+			.addNode(NodeFactory.create(47, "Henri"))
+			.addNode(NodeFactory.create(48, "Vadim"))
+			.addNode(NodeFactory.create(49, "Merlin"));
 
 		return graph;
 	}
