@@ -182,7 +182,7 @@ var ViewManager = {
         // L'angle total parcouru est grand quand on a beaucoup de noeuds
         var maxAngle = (3/2) * Math.PI;
         // Quand on est à la première profondeur, on peut décrire un cercle entier
-        if (depth <= 1 && nodes.length > 8)
+        if (depth < 1 && nodes.length > 6)
             maxAngle = 2 * Math.PI;
         // Mais quand on en a deux ou trois, on fait plus petit
         else if (nodes.length <= 4)
@@ -266,7 +266,7 @@ var ViewManager = {
         circle.setCenter(position);
     },
 
-
+    
     // Trouve une position libre pour commencer un nouveau graphe
     getCozyPosition: function() {
         var cozy = ViewManager.ORIGIN;
@@ -281,7 +281,7 @@ var ViewManager = {
                 maxLng = allRoots[0].position.lng();
 
             var compareLat = function(childrenNodes, currentNode, depth){
-                
+
                 if (currentNode.position.lng() > maxLng)
                     maxLng = currentNode.position.lng();
             };

@@ -61,9 +61,11 @@ var GraphFactory = {
 // NOEUDS ET ARRETES
 var NodeFactory = {
 	// Création d'un nouveau noeud vide
-	create: function(newId, newWord, newEdges) {
+	create: function(newId, newWord, newEdges, newDepth) {
 		if (newEdges === undefined)
 			newEdges = [];
+		if (newDepth === undefined)
+			newDepth = null;
 
 		return {
 			id: newId,
@@ -71,10 +73,7 @@ var NodeFactory = {
 			edges: newEdges,
 			relevance: 1,
 			parentId: null,
-            view: {
-                circle : null,
-                label : null
-            },
+			depth: newDepth,
 
 			// Méthode : ajouter une nouvelle arrête au noeud
 			addEdge: function(whereTo, newRelevance) {
@@ -154,11 +153,9 @@ var GraphManager = {
 				GraphManager.theGraph.addNode(thisNode);
 			}
 
-			// TODO : se débrouiller pour connaître la depth
-			GraphManager.applyFunctionRecursively(ViewManager.drawNodesAround, rootNode, GraphManager.theGraph.get(rootNode.parentId), GraphManager.theGraph, 5);
+			GraphManager.applyFunctionRecursively(ViewManager.drawNodesAround, rootNode, GraphManager.theGraph.get(rootNode.parentId), GraphManager.theGraph, rootNode.depth + 1);
 		}
 		else {
-			// TODO : indiquer à l'utilisateur qu'il n'y a pas de résultat
 			console.log("Pas de nouveaux résultats à partir du noeud " + rootNode.word);
 			InputManager.showError("Aucun résultat pour le mot <strong>" + rootNode.word + "</strong>");
 

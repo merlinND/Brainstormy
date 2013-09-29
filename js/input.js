@@ -32,16 +32,17 @@ var InputManager = {
 		$(e.target).fadeOut();
 
 		var word = $("#startingPoint").val();
-		InputManager.queryServer("", word);
+		InputManager.queryServer("", word, 0);
 
 		return false;
 	},
 
-	queryServer: function(queryId, queryWord, callback) {
+	queryServer: function(queryId, queryWord, queryDepth, callback) {
 		// A partir du mot donné, on crée une requête
 		var query = { 
 			id: queryId, 
-			word: queryWord
+			word: queryWord,
+			depth: queryDepth
 		};
 
 		if (callback === undefined)
@@ -70,7 +71,7 @@ var InputManager = {
 		});
 	},
 	queryServerWithNode: function(node, callback) {
-		InputManager.queryServer(node.id, node.word, callback);
+		InputManager.queryServer(node.id, node.word, node.depth, callback);
 	},
 
 	// Callback appelé lorsqu'on veut simplement étendre un graphe
@@ -92,7 +93,7 @@ var InputManager = {
 		var cozyPosition = ViewManager.getCozyPosition();
 
 		// On crée le nouveau noeud qui constitue la racine de notre nouveau graphe
-		var newRoot = NodeFactory.create(json.queryNode.id, json.queryNode.word);
+		var newRoot = NodeFactory.create(json.queryNode.id, json.queryNode.word, undefined, 0);
 		for (var j in json.edges){
 			var edge = json.edges[j];
 			newRoot.addEdge(edge.to, edge.relevance);
