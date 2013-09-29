@@ -53,10 +53,11 @@ var ViewManager = {
     ORIGIN: new google.maps.LatLng(0, 0),
 
     MAX_RADIUS: 60,
-    HORIZONTAL_PADDING: 0.015,
-
     DEFAULT_ORBIT: null,
     DEFAULT_FONT_SIZE: 22,
+    EDGES : [],
+    CIRCLES_LABELS : [],
+    
     
     deepestNodeLevel: 0,
 
@@ -73,26 +74,24 @@ var ViewManager = {
         this.DEFAULT_ORBIT = (this.MAX_RADIUS) / 20000;
 
         var graphTypeOptions = {
-            getTileUrl: function(coord, zoom) {
-                return "images/maps_background.jpg";
+                getTileUrl: function(coord, zoom) {
+                    return "images/maps_background.jpg";
+                },
+                tileSize: new google.maps.Size(256, 256),
+                maxZoom: this.MAX_ZOOM,
+                minZoom: 0,
+                radius: 1738000,
+                name: 'Graph'
             },
-            tileSize: new google.maps.Size(256, 256),
-            maxZoom: this.MAX_ZOOM,
-            minZoom: 0,
-            radius: 1738000,
-            name: 'Graph'
-        };
-        var graphMapType = new google.maps.ImageMapType(graphTypeOptions);
-        
-        var mapOptions = {
-            center: this.ORIGIN,
-            zoom: this.MAX_ZOOM,
-            zoomControl: true,
-
-            streetViewControl: false,
-            mapTypeControl: false,
-            panControl: false,
-            scaleControl: false
+            graphMapType = new google.maps.ImageMapType(graphTypeOptions),
+            
+            mapOptions = {
+                center: this.ORIGIN,
+                zoom: this.MAX_ZOOM,
+                streetViewControl: false,
+                mapTypeControlOptions: {
+                    mapTypeIds: ['graph']
+            }
         };
 
         this.map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
@@ -149,6 +148,7 @@ var ViewManager = {
         
         var label = new MapLabel(mapLabelOption);         
         label.setMap(this.map);
+        return label;
     },
     
     drawNode: function(center, node, depth){
@@ -159,10 +159,15 @@ var ViewManager = {
         var color = flatColorsNum[depth % flatColorsNum.length];
         var radius = node.relevance * this.MAX_RADIUS;
         
-        //node.view.circle = this.drawCircle(center, radius, color, node.id);
-        //node.view.label = this.drawTextOverlay(center, string);
-        this.drawCircle(center, radius, color, node.id);
-        this.drawTextOverlay(center, string);
+//        node.view.circle = this.drawCircle(center, radius, color, node.id);
+//        node.view.label =  this.drawTextOverlay(center, string);
+        
+        var tab = 
+                [ node.id, this.drawCircle(center, radius, color, node.id),
+            this.drawTextOverlay(center, string)];
+        
+        ViewManager.CIRCLES_LABELS.push(tab);
+        
         
         // On enregistre la position du node dans celui-ci
         node.position = center;
@@ -171,7 +176,7 @@ var ViewManager = {
     
     drawNodesAround: function(nodes, centerNode, depth, globalRadius) {
         if (globalRadius === null || globalRadius === undefined)
-            globalRadius = ViewManager.DEFAULT_ORBIT;
+            globalRadius = this.DEFAULT_ORBIT;
 
         var ancestorPosition = new google.maps.LatLng(-0.001, 0.000);
         if (centerNode.parentId !== null && centerNode.parentId !== undefined) {
@@ -179,10 +184,11 @@ var ViewManager = {
         }
 
         var center = centerNode.position;
+
         // L'angle total parcouru est grand quand on a beaucoup de noeuds
         var maxAngle = (3/2) * Math.PI;
         // Quand on est à la première profondeur, on peut décrire un cercle entier
-        if (depth < 1 && nodes.length > 6)
+        if (depth <= 1 && nodes.length > 8)
             maxAngle = 2 * Math.PI;
         // Mais quand on en a deux ou trois, on fait plus petit
         else if (nodes.length <= 4)
@@ -207,16 +213,18 @@ var ViewManager = {
                 dLng = globalRadius * Math.cos(progress * maxAngle + angularOffset);
             
             var thisCenter = new google.maps.LatLng(lat + dLat, lng + dLng);
-            ViewManager.drawNode(thisCenter, nodes[i], depth);
+            this.drawNode(thisCenter, nodes[i], depth);
 
-            // On dessine également la connexion entre ce noeud et son parent
-            ViewManager.drawEdge(centerNode, nodes[i]);
+            // On dessine également la connexion entre ce noeud et son parent 
+            // et on la sauvegarde dans le tableau de EDGES
+            var e = this.drawEdge(centerNode, nodes[i]);
+            ViewManager.EDGES.push([centerNode.id, nodes[i].id,e]);
             
         }
 
         // On dézoom la map afin de voir au moins globalRadius
         // TODO : zoom intelligent ? Ou bien zoom statique bien choisi
-        ViewManager.map.setZoom(ViewManager.MAX_ZOOM - 4);
+        this.map.setZoom(this.MAX_ZOOM - 4);
     },
     
     drawEdge: function(node1, node2) {
@@ -229,9 +237,10 @@ var ViewManager = {
             strokeOpacity : 1.0,
             zIndex : -1
         };
-        
-        return new google.maps.Polyline(polyLineOption);
-        
+     
+        var l = new google.maps.Polyline(polyLineOption);
+
+        return l;    
     },
     
     
@@ -265,52 +274,103 @@ var ViewManager = {
     moveCircleTo: function(circle, position) {
         circle.setCenter(position);
     },
-
     
-    // Trouve une position libre pour commencer un nouveau graphe
-    getCozyPosition: function() {
-        var cozy = ViewManager.ORIGIN;
+    resizeEdge : function(parent, enfant, edge, facteur, frames) {
+                    /**
+                     * Coordonnées de l'enfant
+                     */
+                    var elat = enfant.position.lat();
+                    var elng = enfant.position.lng();
+                    
+                    
+                    /**
+                     * Coordonnées du parent
+                     */
+                    var plat = parent.position.lat();
+                    var plng = parent.position.lng();
+                    
+                    var nlat = plat + (elat - plat) * facteur;
+                    var nlng = plng + (elng - plng) * facteur;
+                    
+                    var circle = null;
+                    var label = null;
+                    
+                    for(var i = 0; i < ViewManager.CIRCLES_LABELS.length; i++) {
+                        if(ViewManager.CIRCLES_LABELS[i][0] === enfant.id)  {
+                                
+                            circle = ViewManager.CIRCLES_LABELS[i][1];
+                            label = ViewManager.CIRCLES_LABELS[i][2];
+                        }
+                    }
 
-        // TODO : si le graphe est vide, aller direct à l'origine
-        if (GraphManager.theGraph.nodes.length > 0) {
-            var allRoots = GraphManager.theGraph.getRootNodes();
-
-            // Par défaut, on va chercher à se caler à droite du noeud le plus à droite
-            // et au même niveau que la racine du premier graphe
-            var minLat = allRoots[0].position.lat(),
-                maxLng = allRoots[0].position.lng();
-
-            var compareLat = function(childrenNodes, currentNode, depth){
-
-                if (currentNode.position.lng() > maxLng)
-                    maxLng = currentNode.position.lng();
-            };
-
-            // Pour chaque racine du graphe
-            for (var i in allRoots) {
-                var thisRoot = allRoots[i];
-
-                // On parcourt le graphe à la recherche de la position la plus à droite
-                GraphManager.applyFunctionRecursively(compareLat, thisRoot, null, GraphManager.theGraph, 0);
-
-                cozy = new google.maps.LatLng(minLat, maxLng + ViewManager.HORIZONTAL_PADDING);
-            }
-        }
-
-        return cozy;
+                   
+                    
+                    var k = 0;
+                    window.setInterval(function(){
+          
+                        elat = elat + (nlat - elat)/50;
+                        elng = elng + (nlng - elng)/50;
+                        k++;
+                        
+                       
+                       var pos = new google.maps.LatLng(elat, elng);
+                       edge.setPath([parent.position, pos]);
+                       //var node = GraphManager.theGraph.get(ViewManager.EDGES[j][2]);
+                       circle.setCenter(pos);
+                       label.set('position',pos);
+                       if(k > 50) {
+                          //i = ViewManager.EDGES.length + 1;
+                          window.clearInterval();
+                           
+                       }
+                        console.log("Bonjour");
+                    }, 10);
     },
-
 
     /******* INTERACTION FUNCTIONS ****/
     clickListener: function(e, nodeId) {
+        
         var clickedNode = GraphManager.theGraph.get(nodeId);
         this.map.panTo(e.latLng);
-
+        
         // On déploie à partir de cette feuille,
-        // mais seulement si c'en est une
-        if (clickedNode.edges.length <= 0)
-            InputManager.queryServerWithNode(clickedNode, InputManager.extendGraphCallback);
+        // mais seulement si c'est est une
+        if (clickedNode.edges.length <= 0) {
+            console.log(ViewManager.EDGES);
+            InputManager.queryServerWithNode(clickedNode, GraphManager.extendGraph);
+            var circle = null;
+            var label = null;
+            //On recherche l'arrete entre le noeds cliqué et son parent
+            for(var i = 0; i < ViewManager.EDGES.length; i++) {
+                
+                if(ViewManager.EDGES[i][1] === clickedNode.id 
+                        && ViewManager.EDGES[i][0] === clickedNode.parentId)
+                {                                     
+                    console.log(ViewManager.EDGES);
+                    var parent = GraphManager.theGraph.get(
+                                ViewManager.EDGES[i][0]);
+                    var enfant = GraphManager.theGraph.get(
+                                ViewManager.EDGES[i][1]);
+                    
+                        
+                   this.resizeEdge(parent, enfant, ViewManager.EDGES[i][2], 1, 50);
+                } else if (ViewManager.EDGES[i][0] === clickedNode.parentId) {
+                    
+                    var parent = GraphManager.theGraph.get(
+                                ViewManager.EDGES[i][0]);
+                    var enfant = GraphManager.theGraph.get(
+                                ViewManager.EDGES[i][1]);
+                    
+                    if(enfant.edges.length < 1)
+                    this.resizeEdge(parent, enfant, ViewManager.EDGES[i][2], 0.75, 50);
+                }
+            }
+        }
+        
+        
     }
+    
+    
 };
 
 
