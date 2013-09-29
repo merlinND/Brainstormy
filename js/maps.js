@@ -45,13 +45,17 @@ var flatColorsNum = [
 ];
 
 var ViewManager = {
+    
+    
     MAP: null,
     MAX_ZOOM: 20,
     ORIGIN: new google.maps.LatLng(0, 0),
 
     MAX_RADIUS: 60,
     DEFAULT_ORBIT: null, 
-
+    GRAPHICAL_NODES: [],
+    DEFAULT_FONT_SIZE: 22,
+    
     deepestNodeLevel: 0,
 
 
@@ -90,6 +94,7 @@ var ViewManager = {
         MAP = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
         MAP.mapTypes.set('graph', graphMapType);
         MAP.setMapTypeId('graph');
+       
         
         // var originNode = NodeFactory.create(0, "pet"),
         //     allNodes = [
@@ -146,12 +151,15 @@ var ViewManager = {
             minZoom : 16,
             maxZoom : this.MAX_ZOOM,
             text : string,
+            map : MAP,
             position : new google.maps.LatLng(center.lat() + 0.00005, center.lng()),
-            strokeWeight : 1
+            strokeWeight : 1,
+            zIndex:1001
         };
         
         var label = new MapLabel(mapLabelOption);         
-        label.setMap(MAP);
+       
+        return label;
     },
     
     drawNode: function(center, node){
@@ -160,12 +168,12 @@ var ViewManager = {
         var color = flatColorsNum[this.deepestNodeLevel % flatColorsNum.length];
         var radius = node.relevance * this.MAX_RADIUS;
         
-        this.drawCircle(center, radius, color);
-        this.drawTextOverlay(center, string);
+        node.view.circle = this.drawCircle(center, radius, color);
+        node.view.label =  this.drawTextOverlay(center, string);
         
         // On enregistre la position du node dans celui-ci
         node.position = center;
-
+        this.GRAPHICAL_NODES.push(node);
         return node;
     },
     
@@ -203,11 +211,13 @@ var ViewManager = {
 
             // On dessine également la connexion entre ce noeud et son parent
             this.drawEdge(centerNode, nodes[i]);
+            
         }
 
         // On dézoom la map afin de voir au moins globalRadius
         // TODO : zoom intelligent ? Ou bien zoom statique bien choisi
         MAP.setZoom(this.MAX_ZOOM - 3);
+        
 
         this.deepestNodeLevel++;
     },
@@ -262,6 +272,8 @@ var ViewManager = {
 };
 
 
+
+
 /**
  * INIT
  */
@@ -313,3 +325,5 @@ function getHeading(position1, position2) {
     // En radians
     return heading;
 }
+
+    

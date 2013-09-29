@@ -34,6 +34,10 @@ var NodeFactory = {
 			edges: newEdges,
 			relevance: 1,
 			parentId: null,
+            view: {
+                circle : null,
+                label : null
+            },
 
 			// Méthode : ajouter une nouvelle arrête au noeud
 			addEdge: function(whereTo, newRelevance) {
