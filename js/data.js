@@ -160,7 +160,7 @@ var GraphManager = {
 		else {
 			// TODO : indiquer à l'utilisateur qu'il n'y a pas de résultat
 			console.log("Pas de nouveaux résultats à partir du noeud " + rootNode.word);
-			$("#dump").html($("#dump").html() + "Aucun résultat pour le mot <strong>" + rootNode.word + "</strong>");
+			InputManager.showError("Aucun résultat pour le mot <strong>" + rootNode.word + "</strong>");
 
 			InputManager.cleanDump();
 		}

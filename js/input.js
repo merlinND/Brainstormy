@@ -64,7 +64,7 @@ var InputManager = {
 				$("header h1").removeClass("pulsing");
 				console.log("Erreur pour charger la page : " + json.responseText);
 
-				$("#dump").html($("#dump").html() + "Erreur serveur <strong>" + json.responseText + "</strong>");
+				InputManager.showError("Erreur serveur <strong>" + json.responseText + "</strong>");
 				InputManager.cleanDump();
 			}
 		});
@@ -108,6 +108,9 @@ var InputManager = {
 		GraphManager.extendGraph(newRoot, json.newNodes);
 	},
 
+	showError: function(error) {
+		$("#dump").html(error);
+	},
 	cleanDump: function(confirm) {
 	if (confirm === undefined || confirm === null) {
 		setTimeout(function(){

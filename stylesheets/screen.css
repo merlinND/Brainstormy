@@ -237,8 +237,8 @@ header button:hover {
 #dump {
   display: block;
   position: absolute;
-  top: 25px;
-  right: 5px;
+  top: 10px;
+  right: 10px;
   z-index: 100;
   padding: 25px;
   text-align: right;
