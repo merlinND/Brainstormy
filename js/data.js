@@ -6,35 +6,55 @@
 var GraphFactory = {
 	// Création d'un nouveau graphe vide
 	create: function() {
-		return {
-			nodes: [],
-			rootId: null,
-
-			// Méthode : ajout d'un noeud au graphe
-			addNode: function(node) {
-				// Le noeud est enregistré à l'index correspondant à son id
-				this.nodes[node.id] = node;
-
-				// S'il n'y avait aucun noeud avant celui-ci, il devient la racine
-				if (this.rootId === null)
-					this.rootId = node.id;
-
-				// Pour pouvoir faire des appels chaînés (à la jQuery)
-				return this;
-			},
-			// Méthode : récupérer un noeud du graphe par son id
-			get: function(nodeId) {
-				return this.nodes[nodeId];
-			},
-			set: function(nodeId, node) {
-				this.nodes[nodeId] = node;
-				return node;
-			},
-			// Méthode : récupérer un noeud du graphe par son id
-			getRoot: function(nodeId) {
-				return this.get(this.rootId);
-			}
+		var instanciateGraph = function(){
+			this.nodes = [];
+			this.roots = [];
 		};
+		// Méthode : ajout d'un noeud au graphe
+		instanciateGraph.prototype.addNode = function(node) {
+			// Le noeud est enregistré à l'index correspondant à son id
+			this.nodes[node.id] = node;
+
+			// S'il n'y avait aucun noeud avant celui-ci, il devient la racine
+			if (this.roots.length <= 0)
+				this.roots.push(node.id);
+
+			// Pour pouvoir faire des appels chaînés (à la jQuery)
+			return this;
+		};
+		// Méthode : ajout d'une nouvelle racine au graphe
+		instanciateGraph.prototype.addRoot = function(root) {
+			root.parentId = null;
+			this.roots.push(root.id);
+			this.addNode(root);
+			console.log("On a ajouté la racine : ");
+			console.log(root);
+			console.log(" à la liste : ");
+			console.log(this.roots);
+			// Pour pouvoir faire des appels chaînés (à la jQuery)
+			return this;
+		};
+		// Méthode : récupérer un noeud du graphe par son id
+		instanciateGraph.prototype.get = function(nodeId) {
+			return this.nodes[nodeId];
+		};
+		instanciateGraph.prototype.set = function(nodeId, node) {
+			this.nodes[nodeId] = node;
+			return node;
+		};
+		// Méthode : récupérer la première racine du graphe
+		instanciateGraph.prototype.getRoot = function() {
+			return this.get(this.roots[0]);
+		};
+		// Méthode : récupérer un tableau de toutes les racines du graphe
+		instanciateGraph.prototype.getRootNodes = function() {
+			var result = [];
+			for (var i in this.roots)
+				result.push(this.get(this.roots[i]));
+			return result;
+		};
+
+		return new instanciateGraph();
 	}
 };
 
@@ -75,7 +95,7 @@ var GraphManager = {
 	theGraph: GraphFactory.create(),
 
 	init: function(){
-		this.theGraph = this.createSampleGraph();
+		//this.theGraph = this.createSampleGraph();
 		console.log(">> Unicorns!");
 	},
 
@@ -105,19 +125,20 @@ var GraphManager = {
 	},
 
 	displayAllGraph: function(graph){
-		var rootNode = graph.getRoot();
+		if (graph.nodes.length > 0) {
+			var rootNodes = graph.getRootNodes();
 
-		// On place la racine
-		ViewManager.drawNode(ViewManager.ORIGIN, rootNode);
+			// Pour chaque racine
+			for (var i in rootNodes) {
+				// On la place
+				ViewManager.drawNode(ViewManager.ORIGIN, rootNodes[i]);
 
-		// Et on lance le parcourt récursif
-		if (graph.nodes.length > 0)
-			this.applyFunctionRecursively(ViewManager.drawNodesAround, rootNode, null, graph, 0);
+				// Et on lance le parcourt récursif
+				this.applyFunctionRecursively(ViewManager.drawNodesAround, rootNodes[i], null, graph, 0);
+			}
+		}
 		else
 			console.log("Le graphe passé est vide.");
-	},
-	displayGraphFromNode: function(currentNode, parent, graph, depth){
-		console.log("Fonction displayGraphFromNode deprecated !");
 	},
 
 	extendGraph: function(rootNode, newNodes){
@@ -137,8 +158,8 @@ var GraphManager = {
 			GraphManager.applyFunctionRecursively(ViewManager.drawNodesAround, rootNode, GraphManager.theGraph.get(rootNode.parentId), GraphManager.theGraph, 5);
 		}
 		else {
-			console.log("Pas de nouveaux résultats à partir du noeud " + rootNode.word);
 			// TODO : indiquer à l'utilisateur qu'il n'y a pas de résultat
+			console.log("Pas de nouveaux résultats à partir du noeud " + rootNode.word);
 		}
 	},
 

@@ -68,7 +68,6 @@ var InputManager = {
 	// Callback appelé lorsqu'on veut simplement étendre un graphe
 	extendGraphCallback: function(json) {
 		console.log("On étend le graphe grâce à un résultat de query.");
-		console.log(json);
 
 		// On met à jour le noeud déclancheur avec les edges trouvées
 		var queryNode = GraphManager.theGraph.get(json.queryNode.id);
@@ -81,19 +80,20 @@ var InputManager = {
 	newGraphCallback: function(json) {
 		console.log("Succès de la requête vers le serveur ! On crée un nouveau graphe.");
 		
+		// On calcule la position à laquelle on pourra loger notre nouveau graphe
+		var cozyPosition = ViewManager.getCozyPosition();
+
 		// On crée le nouveau noeud qui constitue la racine de notre nouveau graphe
 		var newRoot = NodeFactory.create(json.queryNode.id, json.queryNode.word);
 		for (var j in json.edges){
 			var edge = json.edges[j];
 			newRoot.addEdge(edge.to, edge.relevance);
 		}
-
-		// TODO : remplacer par une gestion multi-graphes
-		GraphManager.theGraph.addNode(newRoot);
+		// Ce noeud est une nouvelle racine de graphe
+		GraphManager.theGraph.addRoot(newRoot);
 
 		// On affiche cette nouvelle racine dans l'espace
-		// TODO : choisir intelligemment la position de la nouvelle racine
-		ViewManager.drawNode(ViewManager.getCozyPosition(), newRoot);
+		ViewManager.drawNode(cozyPosition, newRoot);
 		ViewManager.map.panTo(newRoot.position);
 
 		// Puis on étend ce nouveau graphe avec les noeuds fraichement créés

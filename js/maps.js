@@ -267,24 +267,36 @@ var ViewManager = {
 
     // Trouve une position libre pour commencer un nouveau graphe
     getCozyPosition: function() {
+        var cozy = ViewManager.ORIGIN;
+
         // TODO : si le graphe est vide, aller direct à l'origine
+        if (GraphManager.theGraph.nodes.length > 0) {
+            var allRoots = GraphManager.theGraph.getRootNodes();
+            console.log("Les racines sont : ");
+            console.log(allRoots);
+            // Par défaut, on va chercher à se caler à droite du noeud le plus à droite
+            // et au même niveau que la racine du premier graphe
+            var minLat = allRoots[0].position.lat(),
+                maxLng = allRoots[0].position.lng();
 
-        // Par défaut, on va chercher à se caler à droite du noeud le plus à droite
-        // et au même niveau que la racine du premier graphe
-        var minLat = GraphManager.theGraph.getRoot().position.lat(),
-            maxLng = GraphManager.theGraph.getRoot().position.lng();
+            var compareLat = function(childrenNodes, currentNode, depth){
+                console.log(currentNode);
+                if (currentNode.position.lng() > maxLng)
+                    maxLng = currentNode.position.lng();
+            };
 
-        // On parcourt le graphe à la recherche de la position la plus à droite
-        GraphManager.applyFunctionRecursively(function(childrenNodes, currentNode, depth){
-            console.log(currentNode);
-            if (currentNode.position.lng() > maxLng)
-                maxLng = currentNode.position.lng();
+            // Pour chaque racine du graphe
+            for (var i in allRoots) {
+                var thisRoot = allRoots[i];
 
-        }, GraphManager.theGraph.getRoot(), null, GraphManager.theGraph, 0);
+                // On parcourt le graphe à la recherche de la position la plus à droite
+                GraphManager.applyFunctionRecursively(compareLat, thisRoot, null, GraphManager.theGraph, 0);
 
-        var cozy = new google.maps.LatLng(minLat, maxLng + ViewManager.HORIZONTAL_PADDING);
-        console.log(cozy);
+                cozy = new google.maps.LatLng(minLat, maxLng + ViewManager.HORIZONTAL_PADDING);
+            }
+        }
 
+        console.log("On a trouvé une position sympa : " + cozy);
         return cozy;
     },
 

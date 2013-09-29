@@ -171,7 +171,7 @@ header h1 {
 /*   USER INPUT  */
 /* line 140, ../sass/screen.scss */
 form {
-  display: none;
+  display: block;
   position: absolute;
   top: 0;
   left: 0;
