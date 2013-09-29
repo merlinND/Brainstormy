@@ -46,14 +46,12 @@ var flatColorsNum = [
 ];
 
 var ViewManager = {
-    MAP: null,
+    map: null,
     MAX_ZOOM: 20,
     ORIGIN: new google.maps.LatLng(0, 0),
 
     MAX_RADIUS: 60,
-    DEFAULT_ORBIT: null, 
-
-    deepestNodeLevel: 0,
+    DEFAULT_ORBIT: null,
 
 
     init: function() {
@@ -88,13 +86,13 @@ var ViewManager = {
             }
         };
 
-        MAP = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
-        MAP.mapTypes.set('graph', graphMapType);
-        MAP.setMapTypeId('graph');
+        this.map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+        this.map.mapTypes.set('graph', graphMapType);
+        this.map.setMapTypeId('graph');
     },
 
     
-    /******* Drawing functions ****/
+    /******* GRAPH DRAWING FUNCTIONS ****/
     
     /**
      * Draw the circle of the node
@@ -111,17 +109,22 @@ var ViewManager = {
             strokeWeight: 0,
             fillColor: color,
             fillOpacity: 1,
-            map: MAP,
+            map: this.map,
             center: center,
             radius: radius
         };
 
-        return new google.maps.Circle(CircleOptions);
+        var circle = new google.maps.Circle(CircleOptions);
+
+        // On ajoute un listener pour le clic sur ce cercle
+        google.maps.event.addDomListener(circle, 'click', this.clickListener);
+
+        return circle;
     },
     
     drawTextOverlay: function(center, string) {
         var mapLabelOption = {
-            fontSize : MAP.getZoom(),
+            fontSize : this.map.getZoom(),
             fontColor : "#FFFFFF",
             fontFamily : 'verdana',
             minZoom : 16,
@@ -132,7 +135,7 @@ var ViewManager = {
         };
         
         var label = new MapLabel(mapLabelOption);         
-        label.setMap(MAP);
+        label.setMap(this.map);
     },
     
     drawNode: function(center, node, depth){
@@ -174,7 +177,7 @@ var ViewManager = {
             angularOffset = ((2*Math.PI) - maxAngle) / 2 - ancestorOffset;
 
         var theta = ancestorOffset / Math.PI;
-        console.log("Le heading de " + ancestorPosition + " à " + center + " est " + theta + " pi");
+        //console.log("Le heading de " + ancestorPosition + " à " + center + " est " + theta + " pi");
 
         // On va décrire un grand cercle,
         // et placer les marqueurs à intervalle régulier
@@ -196,14 +199,14 @@ var ViewManager = {
 
         // On dézoom la map afin de voir au moins globalRadius
         // TODO : zoom intelligent ? Ou bien zoom statique bien choisi
-        MAP.setZoom(this.MAX_ZOOM - 4);
+        this.map.setZoom(this.MAX_ZOOM - 4);
     },
     
     drawEdge: function(node1, node2) {
         
         var polyLineOption = {
             path : [node1.position, node2.position],
-            map : MAP,
+            map : this.map,
             strokeWeight : 2,
             strokeColor : '#FFFFFF',
             strokeOpacity : 1.0,
@@ -244,8 +247,13 @@ var ViewManager = {
     },
     moveCircleTo: function(circle, position) {
         circle.setCenter(position);
-    }
+    },
 
+
+    /******* INTERACTION FUNCTIONS ****/
+    clickListener: function(e) {
+        this.map.panTo(e.latLng);
+    }
 };
 
 
