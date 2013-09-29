@@ -53,6 +53,8 @@ var ViewManager = {
     ORIGIN: new google.maps.LatLng(0, 0),
 
     MAX_RADIUS: 60,
+    HORIZONTAL_PADDING: 0.015,
+
     DEFAULT_ORBIT: null,
     DEFAULT_FONT_SIZE: 22,
     EDGES : [],
