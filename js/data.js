@@ -26,6 +26,10 @@ var GraphFactory = {
 			get: function(nodeId) {
 				return this.nodes[nodeId];
 			},
+			set: function(nodeId, node) {
+				this.nodes[nodeId] = node;
+				return node;
+			},
 			// Méthode : récupérer un noeud du graphe par son id
 			getRoot: function(nodeId) {
 				return this.get(this.rootId);
@@ -107,6 +111,43 @@ var GraphManager = {
 			// On parcourt récursivement la suite du graphe à partir de cet enfant
 			GraphManager.displayGraphFromNode(child, currentNode, graph, depth+1);
 		}
+	},
+
+	extendGraph: function(json){
+		console.log("On étend le graphe grâce à un résultat de query.");
+		console.log(json);
+		if (json.length > 1) {
+			var queryNode = json[0];
+
+			// TODO : faire tout ça côté serveur
+			// TODO : enregistrer la relevance dans les nodes eux-même
+			// TODO : le serveur ne doit pas remplacer les edges, seulement en rajouter !
+			for(var i in json){
+				var thisNode = json[i];
+				if (thisNode.relevance === undefined)
+					// TODO : remplacer par la vraie valeur
+					thisNode.relevance = 1;
+
+				// On restaure la position sous forme d'objet LatLng
+				if (thisNode.position !== undefined && thisNode.position !== null)
+					thisNode.position = new google.maps.LatLng(thisNode.position.nb, thisNode.position.ob);
+				if (thisNode.parentId === null)
+					thisNode.parentId = queryNode.id;
+				
+				// Tous sauf le premier, qui correspond au noeud déclancheur
+				if (i > 0)
+					GraphManager.theGraph.addNode(thisNode);
+			}
+			
+			// On met à jour l'élément sur lequel on a cliqué pour originer la requête
+			// (le serveur lui a ajouté des edges)
+			GraphManager.theGraph.set(queryNode.id, queryNode);
+			console.log(queryNode);
+			// TODO : se débrouiller pour connaître la depth
+			GraphManager.displayGraphFromNode(queryNode, GraphManager.theGraph.get(queryNode.parentId), GraphManager.theGraph, 0);
+		}
+		else
+			console.log("Pas de nouveaux résultats à partir du noeud " + json[0].word);
 	},
 
 	createSampleGraph: function(){

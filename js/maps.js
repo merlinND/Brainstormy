@@ -104,7 +104,7 @@ var ViewManager = {
      * @returns {google.maps.Circle} Le cercle créé
      * 
      */
-    drawCircle: function(center, radius, color) {
+    drawCircle: function(center, radius, color, nodeId) {
         var CircleOptions = {
             strokeWeight: 0,
             fillColor: color,
@@ -117,7 +117,9 @@ var ViewManager = {
         var circle = new google.maps.Circle(CircleOptions);
 
         // On ajoute un listener pour le clic sur ce cercle
-        google.maps.event.addDomListener(circle, 'click', this.clickListener);
+        google.maps.event.addListener(circle, 'click', function(e){
+            ViewManager.clickListener(e, nodeId);
+        });
 
         return circle;
     },
@@ -146,7 +148,7 @@ var ViewManager = {
         var color = flatColorsNum[depth % flatColorsNum.length];
         var radius = node.relevance * this.MAX_RADIUS;
         
-        this.drawCircle(center, radius, color);
+        this.drawCircle(center, radius, color, node.id);
         this.drawTextOverlay(center, string);
         
         // On enregistre la position du node dans celui-ci
@@ -168,8 +170,11 @@ var ViewManager = {
 
         // L'angle total parcouru est grand quand on a beaucoup de noeuds
         var maxAngle = (3/2) * Math.PI;
+        // Quand on est à la première profondeur, on peut décrire un cercle entier
+        if (depth <= 1 && nodes.length > 8)
+            maxAngle = 2 * Math.PI;
         // Mais quand on en a deux ou trois, on fait plus petit
-        if (nodes.length <= 4)
+        else if (nodes.length <= 4)
             maxAngle = (2/3) * Math.PI;
 
 
@@ -251,8 +256,14 @@ var ViewManager = {
 
 
     /******* INTERACTION FUNCTIONS ****/
-    clickListener: function(e) {
+    clickListener: function(e, nodeId) {
+        var clickedNode = GraphManager.theGraph.get(nodeId);
         this.map.panTo(e.latLng);
+
+        // On déploie à partir de cette feuille,
+        // mais seulement si c'est est une
+        if (clickedNode.edges.length <= 0)
+            InputManager.queryServerWithNode(clickedNode, GraphManager.extendGraph);
     }
 };
 
