@@ -69,7 +69,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, 
 /*    COULEURS   */
 /* ************* */
 /*    GÉNÉRAL    */
-/* line 45, ../sass/screen.scss */
+/* line 46, ../sass/screen.scss */
 html, body {
   width: 100%;
   height: 100%;
@@ -77,49 +77,117 @@ html, body {
   min-height: 100%;
 }
 
-/* line 50, ../sass/screen.scss */
+/* line 51, ../sass/screen.scss */
 body {
   background-color: #2c3e50;
   font-size: 18px;
   font-family: "Lucida Grande", Helvetica, Arial, sans-serif;
   color: #27ae60;
+  @-moz-keyframes thePulse {
+    /* line 97, ../sass/screen.scss */
+    0%, 100% {
+      opacity: 1;
+    }
+
+    /* line 98, ../sass/screen.scss */
+    50% {
+      opacity: 0.35;
+    }
 }
-/* line 58, ../sass/screen.scss */
+
+  @-webkit-keyframes thePulse {
+    /* line 97, ../sass/screen.scss */
+    0%, 100% {
+      opacity: 1;
+    }
+
+    /* line 98, ../sass/screen.scss */
+    50% {
+      opacity: 0.35;
+    }
+}
+
+  @-o-keyframes thePulse {
+    /* line 97, ../sass/screen.scss */
+    0%, 100% {
+      opacity: 1;
+    }
+
+    /* line 98, ../sass/screen.scss */
+    50% {
+      opacity: 0.35;
+    }
+}
+
+  @-ms-keyframes thePulse {
+    /* line 97, ../sass/screen.scss */
+    0%, 100% {
+      opacity: 1;
+    }
+
+    /* line 98, ../sass/screen.scss */
+    50% {
+      opacity: 0.35;
+    }
+}
+
+  @keyframes thePulse {
+    /* line 97, ../sass/screen.scss */
+    0%, 100% {
+      opacity: 1;
+    }
+
+    /* line 98, ../sass/screen.scss */
+    50% {
+      opacity: 0.35;
+    }
+}
+
+}
+/* line 59, ../sass/screen.scss */
 body h1, body h2, body h3, body h4, body h5, body h6 {
   margin-bottom: 10px;
   color: #2ecc71;
 }
-/* line 64, ../sass/screen.scss */
+/* line 65, ../sass/screen.scss */
 body h1 {
   font-size: 3em;
 }
-/* line 68, ../sass/screen.scss */
+/* line 69, ../sass/screen.scss */
 body h2 {
   font-size: 2.5em;
 }
-/* line 72, ../sass/screen.scss */
+/* line 73, ../sass/screen.scss */
 body h3 {
   font-size: 1.7em;
 }
-/* line 76, ../sass/screen.scss */
+/* line 77, ../sass/screen.scss */
 body h4 {
   font-size: 1.5em;
 }
-/* line 80, ../sass/screen.scss */
+/* line 81, ../sass/screen.scss */
 body .clear {
   display: block;
   clear: both;
 }
-/* line 85, ../sass/screen.scss */
+/* line 86, ../sass/screen.scss */
 body .success {
   margin: 10px 0;
   color: #05af0d;
   text-align: center;
 }
+/* line 93, ../sass/screen.scss */
+body .pulsing {
+  -webkit-animation: thePulse 1s infinite ease;
+  -moz-animation: thePulse 1s infinite ease;
+  -ms-animation: thePulse 1s infinite ease;
+  -o-animation: thePulse 1s infinite ease;
+  animation: thePulse 1s infinite ease;
+}
 
 /* ************* */
 /*    HEADER     */
-/* line 95, ../sass/screen.scss */
+/* line 105, ../sass/screen.scss */
 header {
   display: block;
   z-index: 100;
@@ -128,14 +196,14 @@ header {
   left: 0;
   right: 0;
 }
-/* line 102, ../sass/screen.scss */
+/* line 112, ../sass/screen.scss */
 header h1 {
   margin: 15px 0 0 100px;
 }
 
 /* ************* */
 /*    THE MAP    */
-/* line 110, ../sass/screen.scss */
+/* line 121, ../sass/screen.scss */
 #map-canvas {
   position: absolute;
   top: 0;
@@ -145,7 +213,7 @@ header h1 {
   z-index: 10;
 }
 
-/* line 116, ../sass/screen.scss */
+/* line 127, ../sass/screen.scss */
 #dump {
   display: block;
   position: absolute;
@@ -153,15 +221,12 @@ header h1 {
   right: 5px;
   z-index: 100;
   padding: 25px;
-  background-color: #c0392b;
-  opacity: 0.2;
-}
-/* line 127, ../sass/screen.scss */
-#dump:hover {
-  opacity: 1;
+  text-align: right;
+  font-size: 22px;
+  color: #e67e22;
 }
 @media (max-width: 500px) {
-  /* line 116, ../sass/screen.scss */
+  /* line 127, ../sass/screen.scss */
   #dump {
     background-color: #e74c3c;
   }
@@ -169,9 +234,8 @@ header h1 {
 
 /* ************* */
 /*   USER INPUT  */
-/* line 140, ../sass/screen.scss */
+/* line 147, ../sass/screen.scss */
 form {
-  display: block;
   position: absolute;
   top: 0;
   left: 0;
@@ -180,7 +244,7 @@ form {
   z-index: 500;
   background-color: rgba(0, 0, 0, 0.8);
 }
-/* line 149, ../sass/screen.scss */
+/* line 154, ../sass/screen.scss */
 form input.word {
   display: block;
   width: 60%;

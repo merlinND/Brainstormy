@@ -73,24 +73,26 @@ var ViewManager = {
         this.DEFAULT_ORBIT = (this.MAX_RADIUS) / 20000;
 
         var graphTypeOptions = {
-                getTileUrl: function(coord, zoom) {
-                    return "images/maps_background.jpg";
-                },
-                tileSize: new google.maps.Size(256, 256),
-                maxZoom: this.MAX_ZOOM,
-                minZoom: 0,
-                radius: 1738000,
-                name: 'Graph'
+            getTileUrl: function(coord, zoom) {
+                return "images/maps_background.jpg";
             },
-            graphMapType = new google.maps.ImageMapType(graphTypeOptions),
-            
-            mapOptions = {
-                center: this.ORIGIN,
-                zoom: this.MAX_ZOOM,
-                streetViewControl: false,
-                mapTypeControlOptions: {
-                    mapTypeIds: ['graph']
-            }
+            tileSize: new google.maps.Size(256, 256),
+            maxZoom: this.MAX_ZOOM,
+            minZoom: 0,
+            radius: 1738000,
+            name: 'Graph'
+        };
+        var graphMapType = new google.maps.ImageMapType(graphTypeOptions);
+        
+        var mapOptions = {
+            center: this.ORIGIN,
+            zoom: this.MAX_ZOOM,
+            zoomControl: true,
+
+            streetViewControl: false,
+            mapTypeControl: false,
+            panControl: false,
+            scaleControl: false
         };
 
         this.map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
@@ -272,15 +274,14 @@ var ViewManager = {
         // TODO : si le graphe est vide, aller direct à l'origine
         if (GraphManager.theGraph.nodes.length > 0) {
             var allRoots = GraphManager.theGraph.getRootNodes();
-            console.log("Les racines sont : ");
-            console.log(allRoots);
+
             // Par défaut, on va chercher à se caler à droite du noeud le plus à droite
             // et au même niveau que la racine du premier graphe
             var minLat = allRoots[0].position.lat(),
                 maxLng = allRoots[0].position.lng();
 
             var compareLat = function(childrenNodes, currentNode, depth){
-                console.log(currentNode);
+                
                 if (currentNode.position.lng() > maxLng)
                     maxLng = currentNode.position.lng();
             };
@@ -296,7 +297,6 @@ var ViewManager = {
             }
         }
 
-        console.log("On a trouvé une position sympa : " + cozy);
         return cozy;
     },
 

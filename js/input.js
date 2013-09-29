@@ -48,6 +48,7 @@ var InputManager = {
 			callback = InputManager.newGraphCallback;
 
 		console.log("On fait un envoi au serveur : " + JSON.stringify(query));
+		$("header h1").addClass("pulsing");
 
 		// TODO : envoyer le mot au serveur
 		$.ajax({
@@ -55,9 +56,14 @@ var InputManager = {
 			type: 'GET',
 			data: "json=" + JSON.stringify(query) + "&max=" + this.MAX_NODES_PER_QUERY,
 			dataType: "json",
-			success: callback,
+			success: function(json){
+				$("header h1").removeClass("pulsing");
+				callback(json);
+			},
 			error: function(json){
 				console.log("Erreur pour charger la page : " + json.responseText);
+				$("#dump").html($("#dump").html() + "Erreur serveur <strong>" + json.responseText + "</strong>");
+				InputManager.cleanDump();
 			}
 		});
 	},
@@ -98,7 +104,20 @@ var InputManager = {
 
 		// Puis on étend ce nouveau graphe avec les noeuds fraichement créés
 		GraphManager.extendGraph(newRoot, json.newNodes);
+	},
+
+	cleanDump: function(confirm) {
+	if (confirm === undefined || confirm === null) {
+		setTimeout(function(){
+			InputManager.cleanDump(true);
+		}, 5000);
 	}
+	else {
+		$("#dump").fadeOut(800, function(){
+			$("#dump").empty().fadeIn();
+		});
+	}
+}
 };
 
 $(document).ready(function(){

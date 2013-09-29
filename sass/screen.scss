@@ -1,6 +1,7 @@
 @import "compass/reset";
 @import "compass";
 @import "compass/css3/transform";
+@import "animation";
 
 /* ************* */
 /*   REPONSIVE   */
@@ -87,6 +88,15 @@ body
 		color: #05af0d;
 		text-align: center;
 	}
+	
+	// Animation de clignottement (waiter chargement)
+	.pulsing {
+		@include animation (thePulse 1s infinite ease);
+	}
+	@include keyframes(thePulse) {
+		0%, 100% { opacity: 1 }
+		50% { opacity: 0.35 }
+	}
 }
 
 /* ************* */
@@ -104,6 +114,7 @@ header
 	}
 }
 
+
 /* ************* */
 /*    THE MAP    */
 #map-canvas
@@ -120,13 +131,9 @@ header
 	z-index: 100;
 
 	padding: 25px;
-	background-color: $pomegranate;
-	opacity: 0.2;
-
-	&:hover
-	{
-		opacity: 1;
-	}
+	text-align: right;
+	font-size: 22px;
+	color: $carrot;
 
 	// Test pour le responsive design
 	@include breakpoint($mobile-max-width) {
@@ -138,8 +145,6 @@ header
 /*   USER INPUT  */
 form
 {
-	display: block;
-
 	position: absolute;
 	top: 0; left: 0; bottom: 0; right: 0;
 	z-index: 500;
