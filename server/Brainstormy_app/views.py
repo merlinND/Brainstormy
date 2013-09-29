@@ -14,8 +14,30 @@ import nltk.data
 import urllib3
 from urllib3 import PoolManager
 from django.utils.html import strip_tags
+import json
+import urllib
 
-cache.set('id_counter', 1, 30000)
+def showsome(searchfor):
+  query = urllib.urlencode({'q': searchfor})
+  print '##############query ',query
+  url = 'http://ajax.googleapis.com/ajax/services/search/web?v=1.0&%s' % query
+  print '##############url ',url
+  search_response = urllib.urlopen(url)
+  print '##############search_response ',search_response
+  search_results = search_response.read()
+  print '##############search_results ',search_results
+  results = json.loads(search_results)
+  data = results['responseData']
+  hits = data['results']
+  print 'Top %d hits:' % len(hits)
+  for h in hits: print ' ', h['url']
+  
+  return hits[0]['url']
+
+#from models import Brainstorming
+#from models import Idea
+
+cache.set('id_counter', 0, 30000)
 
 class MyText(Text):
     def similar(self, word, num=20):
@@ -53,14 +75,19 @@ nltk.data.path.append('/home/hh/Projets_informatique/fhacktory/Brainstormy/serve
 
 
 def query(request):
-	url = "http://en.wikipedia.org/wiki/"
+	max_value = 20
 	id_counter=int(cache.get('id_counter'))
+	if request.GET.get('max'):
+		max_value = json.loads(request.GET['max'])
 	if request.GET.get('json'):
 		my_json = json.loads(request.GET['json']) # json decode
 		my_json['edges'] = []
 
 		# extraction des mots similaires
-		url+=my_json['word']
+		url = showsome(my_json['word']+' wikipedia')
+		my_json['word']=url.split('/')[-1]
+		#url='http://en.wikipedia.org/wiki/'+my_json['word']
+		#url=g.results[0].URL
 		manager = PoolManager(10)
 		r = manager.request('GET', url)
 		wiki=""
@@ -70,22 +97,27 @@ def query(request):
 		# supprimer les balises du texte
 		text_1 = strip_tags(wiki)
 		text_1 = re.sub("\[[1-9]+\]", "",  text_1)
+		text_1 = re.sub(" (.){1,3} ", " ",  text_1)
 
 		# generation du corpus
 		text_1 = nltk.word_tokenize(text_1)
 
 		text_2 = MyText(word.lower() for word in text_1)
-		words = text_2.similar(my_json['word'])
+		words = text_2.similar(my_json['word'], max_value)
 		if not words:
 			nodes=my_json
 		else:
 			wordList = re.sub("[^\w]", " ",  words[0]).split()
-
+			if not my_json['id']:
+				my_json['id']=id_counter
+				id_counter+=1
+				cache.incr('id_counter')
 			current_id=my_json['id']
-			nodes=[my_json]
+			nodes={'edges': [], 'newNodes': [], 'queryNode': my_json}
+			nodes['queryNode']['id']=current_id
 			for word in wordList:
-				nodes.append({'id': id_counter, 'word': word, 'edges': []})
-				my_json['edges'].append({'to': id_counter, 'relevance': 0.2})
+				nodes['edges'].append({'to': id_counter, 'relevance': 0.2})
+				nodes['newNodes'].append({'id': id_counter, 'parentId': current_id, 'relevance': 0.2, 'word': word, 'edges': [], 'depth': 1})
 				id_counter+=1
 				cache.incr('id_counter')
 
