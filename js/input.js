@@ -1,7 +1,7 @@
 var InputManager = {
 	HOST: "http://192.168.66.26:9000",
 	QUERY_URL: "query",
-	MAX_NODES_PER_QUERY: 6,
+	MAX_NODES_PER_QUERY: 8,
 
 	init: function(){
 		// TOOD : pendant les tests, on ne déclanche l'affichage du
@@ -32,28 +32,28 @@ var InputManager = {
 		$(e.target).fadeOut();
 
 		var word = $("#startingPoint").val();
-		InputManager.queryServer(word);
+		InputManager.queryServer("", word);
 
 		return false;
 	},
 
-	queryServer: function(word, callback) {
-		// A partir du mot donné, on crée le noeud initial
-		// TODO : choisir intelligemment un id
-		var queryNode = NodeFactory.create(0, word);
-		InputManager.queryServerWithNode(queryNode, callback);
-	},
-	queryServerWithNode: function(node, callback) {
-		if (callback === undefined)
-			callback = InputManager.queryCallback;
+	queryServer: function(queryId, queryWord, callback) {
+		// A partir du mot donné, on crée une requête
+		var query = { 
+			id: queryId, 
+			word: queryWord
+		};
 
-		console.log("On fait un envoi au serveur : " + JSON.stringify(node));
+		if (callback === undefined)
+			callback = InputManager.newGraphCallback;
+
+		console.log("On fait un envoi au serveur : " + JSON.stringify(query));
 
 		// TODO : envoyer le mot au serveur
 		$.ajax({
 			url: this.HOST + '/' + this.QUERY_URL + "/",
 			type: 'GET',
-			data: "json=" + JSON.stringify(node) + "&max=" + this.MAX_NODES_PER_QUERY,
+			data: "json=" + JSON.stringify(query) + "&max=" + this.MAX_NODES_PER_QUERY,
 			dataType: "json",
 			success: callback,
 			error: function(json){
@@ -61,37 +61,43 @@ var InputManager = {
 			}
 		});
 	},
+	queryServerWithNode: function(node, callback) {
+		InputManager.queryServer(node.id, node.word, callback);
+	},
 
-	// Callback par défaut pour construire un nouveau graphe
-	queryCallback: function(json) {
-		console.log("Succès de la requête vers le serveur !");
-		var queryNode = json[0];
-
-		// On peut déjà placer cette nouvelle racine
-		// TODO : choisir intelligemment la position de la nouvelle racine
-		ViewManager.drawNode(new google.maps.LatLng(-0.005, 0), queryNode);
-
-		// TODO : faire tout ça côté serveur
-		// TODO : enregistrer la relevance dans les nodes eux-même
-		for(var i in json){
-			var thisNode = json[i];
-			if (thisNode.relevance === undefined)
-				// TODO : remplacer par la vraie valeur
-				thisNode.relevance = 1;
-			if (thisNode.parentId === null)
-				thisNode.parentId = queryNode.id;
-
-			// On restaure la position sous forme d'objet LatLng
-			if (thisNode.position !== undefined && thisNode.position !== null)
-				thisNode.position = new google.maps.LatLng(thisNode.position.nb, thisNode.position.ob);
-		}
-
+	// Callback appelé lorsqu'on veut simplement étendre un graphe
+	extendGraphCallback: function(json) {
+		console.log("On étend le graphe grâce à un résultat de query.");
 		console.log(json);
 
-		// Les noeuds suivants sont tous les nouveaux noeuds
-		var newNodes = json.slice(1);
+		// On met à jour le noeud déclancheur avec les edges trouvées
+		var queryNode = GraphManager.theGraph.get(json.queryNode.id);
+		queryNode.edges = json.edges;
 
-		ViewManager.drawNodesAround(newNodes, queryNode, 0);
+		GraphManager.extendGraph(queryNode, json.newNodes);
+	},
+
+	// Callback appelé lorsqu'on construit un nouveau graphe suite à une requête
+	newGraphCallback: function(json) {
+		console.log("Succès de la requête vers le serveur ! On crée un nouveau graphe.");
+		
+		// On crée le nouveau noeud qui constitue la racine de notre nouveau graphe
+		var newRoot = NodeFactory.create(json.queryNode.id, json.queryNode.word);
+		for (var j in json.edges){
+			var edge = json.edges[j];
+			newRoot.addEdge(edge.to, edge.relevance);
+		}
+
+		// TODO : remplacer par une gestion multi-graphes
+		GraphManager.theGraph.addNode(newRoot);
+
+		// On affiche cette nouvelle racine dans l'espace
+		// TODO : choisir intelligemment la position de la nouvelle racine
+		ViewManager.drawNode(ViewManager.getCozyPosition(), newRoot);
+		ViewManager.map.panTo(newRoot.position);
+
+		// Puis on étend ce nouveau graphe avec les noeuds fraichement créés
+		GraphManager.extendGraph(newRoot, json.newNodes);
 	}
 };
 

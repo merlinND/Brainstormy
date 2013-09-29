@@ -82,19 +82,7 @@ var GraphManager = {
 	/*
 	 * PARCOURS DU GRAPHE
 	 */
-	goThroughGraph: function(graph){
-		var rootNode = graph.getRoot();
-
-		// On place la racine
-		ViewManager.drawNode(ViewManager.ORIGIN, this.theGraph.getRoot());
-
-		// Et on lance le parcourt récursif
-		if (graph.nodes.length > 0)
-			this.displayGraphFromNode(this.theGraph.getRoot(), null, graph, 0);
-		else
-			console.log("Le graphe passé est vide.");
-	},
-	displayGraphFromNode: function(currentNode, parent, graph, depth){
+	applyFunctionRecursively: function(action, currentNode, parent, graph, depth){
 		// Pour chaque arrête partant de ce noeud
 		var childrenNodes = [];
 		for (var j in currentNode.edges){
@@ -107,51 +95,51 @@ var GraphManager = {
 			childrenNodes.push(targetNode);
 		}
 
-		// On affiche tous les noeuds de ce niveau
-		ViewManager.drawNodesAround(childrenNodes, currentNode, depth);
+		// On applique l'action à cette liste d'enfants
+		action(childrenNodes, currentNode, depth);
 
 		for (var k in childrenNodes){
-			var child = childrenNodes[k];
 			// On parcourt récursivement la suite du graphe à partir de cet enfant
-			GraphManager.displayGraphFromNode(child, currentNode, graph, depth+1);
+			GraphManager.applyFunctionRecursively(action, childrenNodes[k], currentNode, graph, depth+1);
 		}
 	},
 
-	extendGraph: function(json){
-		console.log("On étend le graphe grâce à un résultat de query.");
-		console.log(json);
-		if (json.length > 1) {
-			var queryNode = json[0];
+	displayAllGraph: function(graph){
+		var rootNode = graph.getRoot();
 
-			// TODO : faire tout ça côté serveur
-			// TODO : enregistrer la relevance dans les nodes eux-même
-			// TODO : le serveur ne doit pas remplacer les edges, seulement en rajouter !
-			for(var i in json){
-				var thisNode = json[i];
-				if (thisNode.relevance === undefined)
-					// TODO : remplacer par la vraie valeur
-					thisNode.relevance = 1;
+		// On place la racine
+		ViewManager.drawNode(ViewManager.ORIGIN, rootNode);
+
+		// Et on lance le parcourt récursif
+		if (graph.nodes.length > 0)
+			this.applyFunctionRecursively(ViewManager.drawNodesAround, rootNode, null, graph, 0);
+		else
+			console.log("Le graphe passé est vide.");
+	},
+	displayGraphFromNode: function(currentNode, parent, graph, depth){
+		console.log("Fonction displayGraphFromNode deprecated !");
+	},
+
+	extendGraph: function(rootNode, newNodes){
+		if (newNodes.length > 1) {
+			// On ajoute chacun des nouveaux noeuds au graphe
+			for(var i in newNodes){
+				var thisNode = newNodes[i];
 
 				// On restaure la position sous forme d'objet LatLng
 				if (thisNode.position !== undefined && thisNode.position !== null)
 					thisNode.position = new google.maps.LatLng(thisNode.position.nb, thisNode.position.ob);
-				if (thisNode.parentId === null)
-					thisNode.parentId = queryNode.id;
-				
-				// Tous sauf le premier, qui correspond au noeud déclancheur
-				if (i > 0)
-					GraphManager.theGraph.addNode(thisNode);
+
+				GraphManager.theGraph.addNode(thisNode);
 			}
-			
-			// On met à jour l'élément sur lequel on a cliqué pour originer la requête
-			// (le serveur lui a ajouté des edges)
-			GraphManager.theGraph.set(queryNode.id, queryNode);
-			console.log(queryNode);
+
 			// TODO : se débrouiller pour connaître la depth
-			GraphManager.displayGraphFromNode(queryNode, GraphManager.theGraph.get(queryNode.parentId), GraphManager.theGraph, 0);
+			GraphManager.applyFunctionRecursively(ViewManager.drawNodesAround, rootNode, GraphManager.theGraph.get(rootNode.parentId), GraphManager.theGraph, 5);
 		}
-		else
-			console.log("Pas de nouveaux résultats à partir du noeud " + json[0].word);
+		else {
+			console.log("Pas de nouveaux résultats à partir du noeud " + rootNode.word);
+			// TODO : indiquer à l'utilisateur qu'il n'y a pas de résultat
+		}
 	},
 
 	createSampleGraph: function(){
@@ -183,5 +171,5 @@ var GraphManager = {
  */
 $(document).ready(function(){
 	GraphManager.init();
-	GraphManager.goThroughGraph(GraphManager.theGraph);
+	GraphManager.displayAllGraph(GraphManager.theGraph);
 });

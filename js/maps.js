@@ -155,8 +155,10 @@ var ViewManager = {
         var color = flatColorsNum[depth % flatColorsNum.length];
         var radius = node.relevance * this.MAX_RADIUS;
         
-        node.view.circle = this.drawCircle(center, radius, color, node.id);
-        node.view.label =  this.drawTextOverlay(center, string);
+        //node.view.circle = this.drawCircle(center, radius, color, node.id);
+        //node.view.label = this.drawTextOverlay(center, string);
+        this.drawCircle(center, radius, color, node.id);
+        this.drawTextOverlay(center, string);
         
         // On enregistre la position du node dans celui-ci
         node.position = center;
@@ -165,7 +167,7 @@ var ViewManager = {
     
     drawNodesAround: function(nodes, centerNode, depth, globalRadius) {
         if (globalRadius === null || globalRadius === undefined)
-            globalRadius = this.DEFAULT_ORBIT;
+            globalRadius = ViewManager.DEFAULT_ORBIT;
 
         var ancestorPosition = new google.maps.LatLng(-0.001, 0.000);
         if (centerNode.parentId !== null && centerNode.parentId !== undefined) {
@@ -173,7 +175,6 @@ var ViewManager = {
         }
 
         var center = centerNode.position;
-
         // L'angle total parcouru est grand quand on a beaucoup de noeuds
         var maxAngle = (3/2) * Math.PI;
         // Quand on est à la première profondeur, on peut décrire un cercle entier
@@ -202,16 +203,15 @@ var ViewManager = {
                 dLng = globalRadius * Math.cos(progress * maxAngle + angularOffset);
             
             var thisCenter = new google.maps.LatLng(lat + dLat, lng + dLng);
-            this.drawNode(thisCenter, nodes[i], depth);
 
             // On dessine également la connexion entre ce noeud et son parent
-            this.drawEdge(centerNode, nodes[i]);
+            ViewManager.drawEdge(centerNode, nodes[i]);
             
         }
 
         // On dézoom la map afin de voir au moins globalRadius
         // TODO : zoom intelligent ? Ou bien zoom statique bien choisi
-        this.map.setZoom(this.MAX_ZOOM - 4);
+        ViewManager.map.setZoom(ViewManager.MAX_ZOOM - 4);
     },
     
     drawEdge: function(node1, node2) {
@@ -266,11 +266,11 @@ var ViewManager = {
     clickListener: function(e, nodeId) {
         var clickedNode = GraphManager.theGraph.get(nodeId);
         this.map.panTo(e.latLng);
-        
+
         // On déploie à partir de cette feuille,
-        // mais seulement si c'est est une
+        // mais seulement si c'en est une
         if (clickedNode.edges.length <= 0)
-            InputManager.queryServerWithNode(clickedNode, GraphManager.extendGraph);
+            InputManager.queryServerWithNode(clickedNode, InputManager.extendGraphCallback);
     }
 };
 
