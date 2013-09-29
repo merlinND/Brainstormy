@@ -161,7 +161,7 @@ var ViewManager = {
 
         var ancestorPosition = new google.maps.LatLng(-0.001, 0.000);
         if (centerNode.parentId !== null && centerNode.parentId !== undefined) {
-            ancestorPosition = theGraph.nodes[centerNode.parentId].position;
+            ancestorPosition = GraphManager.theGraph.get(centerNode.parentId).position;
         }
 
         var center = centerNode.position;
