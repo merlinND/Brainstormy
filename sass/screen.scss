@@ -64,6 +64,10 @@ body
 	h1
 	{
 		font-size: 3em;
+		&:hover
+		{
+			cursor: pointer;
+		}
 	}
 	h2
 	{
@@ -99,6 +103,27 @@ body
 	50% { opacity: 0.2 }
 }
 
+
+button
+{
+	display: block;
+	width: 50px; height: 50px;
+	margin: 12px 0 0 45px;
+	float: left;
+
+	border: none;
+	font-size: 40px;
+	line-height: 30px;
+	color: $backgroundColor;
+	background-color: $fontColor;
+
+	&:hover
+	{
+		cursor: pointer;
+	}
+}
+
+
 /* ************* */
 /*    HEADER     */
 header
@@ -114,24 +139,6 @@ header
 		width: auto;
 		margin: 10px 0 0 15px;
 		float: left;
-	}
-	button
-	{
-		display: block;
-		width: 50px; height: 50px;
-		margin: 12px 0 0 45px;
-		float: left;
-
-		border: none;
-		font-size: 40px;
-		line-height: 30px;
-		color: $backgroundColor;
-		background-color: $fontColor;
-
-		&:hover
-		{
-			cursor: pointer;
-		}
 	}
 }
 
@@ -193,15 +200,25 @@ form
 	display: none;
 
 	position: absolute;
-	top: 0; left: 0; bottom: 0; right: 0;
+	top: -5000; left: 0; bottom: 5000; right: 0;
 	z-index: 800;
 	background-color: $backgroundColor;
 
 	.container
 	{
-		width: 80%; height: 100%;
-		margin: 0 auto; padding: 0 25px;
+		position: relative;
+		width: 80%;
+		margin: 0 auto; padding: 25px;
 		background-color: $wet-asphalt;
+
+		button
+		{
+			position: absolute;
+			width: 30px; height: 30px;
+			font-size: 20px;
+			top: 5px; right: 20px;
+			color: $midnight-blue;
+		}
 
 		.step
 		{

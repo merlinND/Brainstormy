@@ -93,30 +93,34 @@ body h1, body h2, body h3, body h4, body h5, body h6 {
 body h1 {
   font-size: 3em;
 }
-/* line 69, ../sass/screen.scss */
+/* line 68, ../sass/screen.scss */
+body h1:hover {
+  cursor: pointer;
+}
+/* line 73, ../sass/screen.scss */
 body h2 {
   font-size: 2.5em;
 }
-/* line 73, ../sass/screen.scss */
+/* line 77, ../sass/screen.scss */
 body h3 {
   font-size: 1.7em;
 }
-/* line 77, ../sass/screen.scss */
+/* line 81, ../sass/screen.scss */
 body h4 {
   font-size: 1.5em;
 }
-/* line 81, ../sass/screen.scss */
+/* line 85, ../sass/screen.scss */
 body .clear {
   display: block;
   clear: both;
 }
-/* line 86, ../sass/screen.scss */
+/* line 90, ../sass/screen.scss */
 body .success {
   margin: 10px 0;
   color: #05af0d;
   text-align: center;
 }
-/* line 91, ../sass/screen.scss */
+/* line 95, ../sass/screen.scss */
 body .pulsing {
   -webkit-animation: thePulse 1.5s infinite ease;
   -moz-animation: thePulse 1.5s infinite ease;
@@ -126,85 +130,67 @@ body .pulsing {
 }
 
 @-moz-keyframes thePulse {
-  /* line 98, ../sass/screen.scss */
+  /* line 102, ../sass/screen.scss */
   0%, 100% {
     opacity: 1;
   }
 
-  /* line 99, ../sass/screen.scss */
+  /* line 103, ../sass/screen.scss */
   50% {
     opacity: 0.2;
   }
 }
 
 @-webkit-keyframes thePulse {
-  /* line 98, ../sass/screen.scss */
+  /* line 102, ../sass/screen.scss */
   0%, 100% {
     opacity: 1;
   }
 
-  /* line 99, ../sass/screen.scss */
+  /* line 103, ../sass/screen.scss */
   50% {
     opacity: 0.2;
   }
 }
 
 @-o-keyframes thePulse {
-  /* line 98, ../sass/screen.scss */
+  /* line 102, ../sass/screen.scss */
   0%, 100% {
     opacity: 1;
   }
 
-  /* line 99, ../sass/screen.scss */
+  /* line 103, ../sass/screen.scss */
   50% {
     opacity: 0.2;
   }
 }
 
 @-ms-keyframes thePulse {
-  /* line 98, ../sass/screen.scss */
+  /* line 102, ../sass/screen.scss */
   0%, 100% {
     opacity: 1;
   }
 
-  /* line 99, ../sass/screen.scss */
+  /* line 103, ../sass/screen.scss */
   50% {
     opacity: 0.2;
   }
 }
 
 @keyframes thePulse {
-  /* line 98, ../sass/screen.scss */
+  /* line 102, ../sass/screen.scss */
   0%, 100% {
     opacity: 1;
   }
 
-  /* line 99, ../sass/screen.scss */
+  /* line 103, ../sass/screen.scss */
   50% {
     opacity: 0.2;
   }
 }
 
-/* ************* */
-/*    HEADER     */
-/* line 105, ../sass/screen.scss */
-header {
-  display: block;
-  z-index: 100;
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-}
-/* line 112, ../sass/screen.scss */
-header h1 {
-  display: block;
-  width: auto;
-  margin: 10px 0 0 15px;
-  float: left;
-}
-/* line 119, ../sass/screen.scss */
-header button {
+/* line 108, ../sass/screen.scss */
+button {
   display: block;
   width: 50px;
   height: 50px;
@@ -216,14 +202,33 @@ header button {
   color: #2c3e50;
   background-color: #27ae60;
 }
-/* line 132, ../sass/screen.scss */
-header button:hover {
+/* line 121, ../sass/screen.scss */
+button:hover {
   cursor: pointer;
 }
 
 /* ************* */
+/*    HEADER     */
+/* line 130, ../sass/screen.scss */
+header {
+  display: block;
+  z-index: 100;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+}
+/* line 137, ../sass/screen.scss */
+header h1 {
+  display: block;
+  width: auto;
+  margin: 10px 0 0 15px;
+  float: left;
+}
+
+/* ************* */
 /*    THE MAP    */
-/* line 142, ../sass/screen.scss */
+/* line 149, ../sass/screen.scss */
 #map-canvas {
   position: absolute;
   top: 0;
@@ -233,7 +238,7 @@ header button:hover {
   z-index: 10;
 }
 
-/* line 148, ../sass/screen.scss */
+/* line 155, ../sass/screen.scss */
 #dump {
   display: block;
   position: absolute;
@@ -246,7 +251,7 @@ header button:hover {
   color: #e67e22;
 }
 @media (max-width: 500px) {
-  /* line 148, ../sass/screen.scss */
+  /* line 155, ../sass/screen.scss */
   #dump {
     background-color: #e74c3c;
   }
@@ -254,7 +259,7 @@ header button:hover {
 
 /* ************* */
 /*   USER INPUT  */
-/* line 168, ../sass/screen.scss */
+/* line 175, ../sass/screen.scss */
 form {
   display: block;
   position: absolute;
@@ -265,7 +270,7 @@ form {
   z-index: 500;
   background-color: rgba(0, 0, 0, 0.8);
 }
-/* line 177, ../sass/screen.scss */
+/* line 184, ../sass/screen.scss */
 form input.word {
   display: block;
   width: 60%;
@@ -278,26 +283,36 @@ form input.word {
 
 /* ************* */
 /*    REPORT     */
-/* line 192, ../sass/screen.scss */
+/* line 199, ../sass/screen.scss */
 #report {
   display: none;
   position: absolute;
-  top: 0;
+  top: -5000;
   left: 0;
-  bottom: 0;
+  bottom: 5000;
   right: 0;
   z-index: 800;
   background-color: #2c3e50;
 }
-/* line 201, ../sass/screen.scss */
+/* line 208, ../sass/screen.scss */
 #report .container {
+  position: relative;
   width: 80%;
-  height: 100%;
   margin: 0 auto;
-  padding: 0 25px;
+  padding: 25px;
   background-color: #34495e;
 }
-/* line 207, ../sass/screen.scss */
+/* line 215, ../sass/screen.scss */
+#report .container button {
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  font-size: 20px;
+  top: 5px;
+  right: 20px;
+  color: #2c3e50;
+}
+/* line 224, ../sass/screen.scss */
 #report .container .step {
   display: inline-block;
   width: auto;
@@ -307,7 +322,7 @@ form input.word {
   text-align: center;
   background-color: #d35400;
 }
-/* line 218, ../sass/screen.scss */
+/* line 235, ../sass/screen.scss */
 #report .container .step .nodeName {
   color: #95a5a6;
   font-size: 42px;
