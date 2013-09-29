@@ -113,17 +113,17 @@ var InputManager = {
 		$("#dump").html(error);
 	},
 	cleanDump: function(confirm) {
-	if (confirm === undefined || confirm === null) {
-		setTimeout(function(){
-			InputManager.cleanDump(true);
-		}, 5000);
+		if (confirm === undefined || confirm === null) {
+			setTimeout(function(){
+				InputManager.cleanDump(true);
+			}, 5000);
+		}
+		else {
+			$("#dump").fadeOut(800, function(){
+				$("#dump").empty().fadeIn();
+			});
+		}
 	}
-	else {
-		$("#dump").fadeOut(800, function(){
-			$("#dump").empty().fadeIn();
-		});
-	}
-}
 };
 
 $(document).ready(function(){

@@ -153,12 +153,10 @@ var ViewManager = {
 //        node.view.circle = this.drawCircle(center, radius, color, node.id);
 //        node.view.label =  this.drawTextOverlay(center, string);
 
-        var tab =
-                [node.id, this.drawCircle(center, radius, color, node.id),
+        var tab = [node.id, this.drawCircle(center, radius, color, node.id),
                     this.drawTextOverlay(center, string)];
 
         ViewManager.CIRCLES_LABELS.push(tab);
-
 
         // On enregistre la position du node dans celui-ci
         node.position = center;
@@ -166,7 +164,7 @@ var ViewManager = {
     },
     drawNodesAround: function(nodes, centerNode, depth, globalRadius) {
         if (globalRadius === null || globalRadius === undefined)
-            globalRadius = this.DEFAULT_ORBIT;
+            globalRadius = ViewManager.DEFAULT_ORBIT;
 
         var ancestorPosition = new google.maps.LatLng(-0.001, 0.000);
         if (centerNode.parentId !== null && centerNode.parentId !== undefined) {
@@ -203,18 +201,17 @@ var ViewManager = {
                     dLng = globalRadius * Math.cos(progress * maxAngle + angularOffset);
 
             var thisCenter = new google.maps.LatLng(lat + dLat, lng + dLng);
-            this.drawNode(thisCenter, nodes[i], depth);
+            ViewManager.drawNode(thisCenter, nodes[i], depth);
 
             // On dessine également la connexion entre ce noeud et son parent 
             // et on la sauvegarde dans le tableau de EDGES
-            var e = this.drawEdge(centerNode, nodes[i]);
+            var e = ViewManager.drawEdge(centerNode, nodes[i]);
             ViewManager.EDGES.push([centerNode.id, nodes[i].id, e]);
-
         }
 
         // On dézoom la map afin de voir au moins globalRadius
         // TODO : zoom intelligent ? Ou bien zoom statique bien choisi
-        this.map.setZoom(this.MAX_ZOOM - 4);
+        ViewManager.map.setZoom(ViewManager.MAX_ZOOM - 4);
     },
     drawEdge: function(node1, node2) {
 
@@ -332,7 +329,7 @@ var ViewManager = {
             //var node = GraphManager.theGraph.get(ViewManager.EDGES[j][2]);
             circle.setCenter(pos);
             label.set('position', pos);
-            if (k > 50) {
+            if (k >= 50) {
                 //i = ViewManager.EDGES.length + 1;
                 window.clearInterval();
 
