@@ -1,5 +1,5 @@
 var InputManager = {
-	HOST: "http://192.168.66.26:9000",
+	HOST: "http://127.0.0.1:8000",
 	QUERY_URL: "query",
 	MAX_NODES_PER_QUERY: 10,
 

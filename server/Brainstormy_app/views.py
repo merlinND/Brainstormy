@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding:utf-8 -*- 
 import json
 from django.shortcuts import render
 from django.http import HttpResponse
@@ -20,7 +22,7 @@ from django.utils.html import strip_tags
 
 cache.set('id_counter', 0, 30000)
 
-
+def removeNonAscii(s):return "".join(i for i in s if ord(i)<128)
 
 def getgoogleurl(search,siteurl=False):
 	if siteurl==False:
@@ -55,7 +57,7 @@ def getgooglelinks(search,siteurl=False):
 				start = data.find('<a href="/url?q='+str(siteurl))
 			data = data[start+len('<a href="/url?q='):]
 			end = data.find('&amp;sa=U&amp;ei=')
-			if start>-1 and end>-1: 
+			if start>-1 and end>-1:
 				link =  urllib2.unquote(data[0:end])
 				data = data[end:len(data)]
 				if link.find('http')==0:
@@ -65,16 +67,16 @@ def getgooglelinks(search,siteurl=False):
 class MyText(Text):
 	def similar(self, word, num=20):
 		"""
-		Distributional similarity: find other words which appear in the
-		same contexts as the specified word; list most similar words first.
+		Distributional similarity:find other new_ideas which appear in the
+		same contexts as the specified word; list most similar new_ideas first.
 
-		:param word: The word used to seed the similarity search
-		:type word: str
-		:param num: The number of words to generate (default=20)
-		:type num: int
-		:seealso: ContextIndex.similar_words()
+		:param word:The word used to seed the similarity search
+		:type word:str
+		:param num:The number of new_ideas to generate (default=20)
+		:type num:int
+		:seealso:ContextIndex.similar_new_ideas()
 		"""
-		ret_words=[]
+		ret_new_ideas=[]
 		if '_word_context_index' not in self.__dict__:
 			print('Building word-context index...')
 			self._word_context_index = ContextIndex(self.tokens,
@@ -86,81 +88,82 @@ class MyText(Text):
 			contexts = set(wci[word])
 			fd = FreqDist(w for w in wci.conditions() for c in wci[w]
 								if c in contexts and not w == word)
-			words = islice(fd.keys(), num)
-			ret_words.append(tokenwrap(words))
-			print(tokenwrap(words))
+			new_ideas = islice(fd.keys(), num)
+			ret_new_ideas.append(tokenwrap(new_ideas))
+			print(tokenwrap(new_ideas))
 		else:
 			print("No matches")
-		return ret_words
-
+		return ret_new_ideas
 
 nltk.data.path.append('/home/hh/Projets_informatique/fhacktory/Brainstormy/server/Brainstormy_app/nltk_data/')
 
-
-def removeNonAscii(s): return "".join(i for i in s if ord(i)<128)
-
 def query(request):
-	max_value = 20
-	id_counter=int(cache.get('id_counter'))
+	max_ideas = 20 # Nombre maximum de mots (idées pour brainstormer) générés
+
 	if request.GET.get('max'):
-		max_value = json.loads(request.GET['max'])
+		# Le client spécifie le nombre d'idées voulues
+		max_ideas = json.loads(request.GET['max'])
+
 	if request.GET.get('json'):
-		# decodage du json
-		my_json = json.loads(request.GET['json'])
-		my_json['edges'] = []
+		idea = json.loads(request.GET['json'])# Décodage de l'idée (mot) envoyée par le client
+		#idea['edges'] = []
 
-		# recupration du lien wikipedia
-		url = getgooglelinks(my_json['word']+' wikipedia')[0]
+		# Récupération du lien wikipédia à partir du mot reçu
+		url = getgooglelinks(idea['word']+' wikipedia')[0]
 		print url
-		old_json=my_json['word']
-		my_json['word']=url.split('/')[-1]
-		print '#######################json',my_json['word']
+		old_word = idea['word']
+		print '#######################json',idea['word']
 
-		# extraction des mots similaires
+		# Extraction de la page wikipédia
 		manager = PoolManager(10)
 		r = manager.request('GET', url)
-		wiki=""
+		wiki_text=""
 		for match in re.findall(r'<p>(.*)</p>', r.data):
-			wiki+=match+" "
+			wiki_text += match + " "
 
-		# supprimer les balises du texte
-		text_1 = strip_tags(wiki)
-		text_1 = re.sub("\[[1-9]+\]", "",  text_1)
-		text_1 = removeNonAscii(text_1)
+		# Traitement préalable du texte
+		wiki_text = strip_tags(wiki_text)# Suppression des balises
+		wiki_text = removeNonAscii(wiki_text)# Suppression des caractères non-ascii
+		wiki_text = re.sub("\[[1-9]+\]", "",  wiki_text)# Suppression des nombres
+		wiki_text = re.compile(r'\W*\b\w{1,3}\b').sub('', wiki_text)# suppression des mots de moins de 4 lettres
 
-		# generation du corpus
-		text_1 = nltk.word_tokenize(text_1)
+		# Génération du corpus
+		wiki_text = nltk.word_tokenize( wiki_text )
+		wiki_text = MyText( word.lower() for word in wiki_text )
 
-		text_1 = MyText(word.lower() for word in text_1)
-		words = text_1.similar(my_json['word'], max_value)
-		print '#######################words ',words
-		if not words:
-			my_json['word']=old_json
-			nodes=my_json
+		# Obtention des mots similaires
+		new_ideas = wiki_text.similar( idea['word'], max_ideas )
+		print '#######################new_ideas ',new_ideas
+		if not new_ideas:
+			idea['word'] = old_word
+			nodes = idea
 		else:
-			wordList = re.sub("[^\w]", " ",  words[0]).split()
-			if not my_json['id']:
-				my_json['id']=id_counter
-				id_counter+=1
-				cache.incr('id_counter')
-			current_id=my_json['id']
-			my_json['word']=old_json
-			print '#######################json',my_json['word']
-			nodes={'edges': [], 'newNodes': [], 'queryNode': my_json}
-			nodes['queryNode']['id']=current_id
-			for word in wordList:
-				nodes['edges'].append({'to': id_counter, 'relevance': 0.8})
-				nodes['newNodes'].append({'id': id_counter, 'parentId': current_id, 'relevance': 0.8, 'word': word, 'edges': [], 'depth': 1})
+			words_list = re.sub("[^\w]", " ",  new_ideas[0]).split()# cast from string to a list of words
+			id_counter = int( cache.get('id_counter') )# identifiant pour la prochaine idée
+			if not idea['id']:
+				idea['id'] = id_counter
 				id_counter+=1
 				cache.incr('id_counter')
 
-		response = HttpResponse(json.dumps(nodes)) # json encode
+			current_idea_id = idea['id']
+			idea['word'] = old_word
+			nodes = {'edges':[], 'newNodes':[], 'queryNode':idea}
+			for word in words_list:
+				nodes['edges'].append( {'to':id_counter, 'relevance':0.8} )
+				if 'depth' in idea:
+						nodes['newNodes'].append({'id':id_counter, 'parentId':current_idea_id, 'relevance':0.8, 'word':word, 'edges':[], 'depth':idea['depth']+1})
+				else:
+					nodes['newNodes'].append({'id':id_counter, 'parentId':current_idea_id, 'relevance':0.8, 'word':word, 'edges':[], 'depth':1})
+				id_counter+=1
+				cache.incr('id_counter')
+
+		response = HttpResponse(json.dumps(nodes)) # encode les nouveaux noeuds en JSON
 		response["Access-Control-Allow-Origin"] = "*"
 		response["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS"
 		response["Access-Control-Max-Age"] = "1000"
 		response["Access-Control-Allow-Headers"] = "*"
 	else:
-		response = HttpResponse('You submitted nothing!')
+		response = HttpResponse('Your request is invalid')
 		response["Access-Control-Allow-Origin"] = "*"
 		response["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS"
 		response["Access-Control-Max-Age"] = "1000"
