@@ -15,6 +15,7 @@ from django.core.cache import get_cache
 import nltk.data
 import urllib3
 import urllib2
+import operator
 from urllib3 import PoolManager
 from django.utils.html import strip_tags
 #from models import Brainstorming
@@ -99,6 +100,7 @@ nltk.data.path.append('/home/hh/Projets_informatique/fhacktory/Brainstormy/serve
 
 def query(request):
 	max_ideas = 20 # Nombre maximum de mots (idées pour brainstormer) générés
+	word_list = []
 
 	if request.GET.get('max'):
 		# Le client spécifie le nombre d'idées voulues
@@ -106,7 +108,7 @@ def query(request):
 
 	if request.GET.get('json'):
 		idea = json.loads(request.GET['json'])# Décodage de l'idée (mot) envoyée par le client
-		#idea['edges'] = []
+		idea['word'] = idea['word'].lower()
 
 		# Récupération du lien wikipédia à partir du mot reçu
 		url = getgooglelinks(idea['word']+' wikipedia')[0]
@@ -117,45 +119,33 @@ def query(request):
 		# Extraction de la page wikipédia
 		manager = PoolManager(10)
 		r = manager.request('GET', url)
-		wiki_text=""
-		for match in re.findall(r'<p>(.*)</p>', r.data):
-			wiki_text += match + " "
-
-		# Traitement préalable du texte
-		wiki_text = strip_tags(wiki_text)# Suppression des balises
-		wiki_text = removeNonAscii(wiki_text)# Suppression des caractères non-ascii
-		wiki_text = re.sub("\[[1-9]+\]", "",  wiki_text)# Suppression des nombres
-		wiki_text = re.compile(r'\W*\b\w{1,3}\b').sub('', wiki_text)# suppression des mots de moins de 4 lettres
-
-		# Génération du corpus
-		wiki_text = nltk.word_tokenize( wiki_text )
-		wiki_text = MyText( word.lower() for word in wiki_text )
-
-		# Obtention des mots similaires
-		new_ideas = wiki_text.similar( idea['word'], max_ideas )
-		print '#######################new_ideas ',new_ideas
-		if not new_ideas:
-			idea['word'] = old_word
-			nodes = idea
-		else:
-			words_list = re.sub("[^\w]", " ",  new_ideas[0]).split()# cast from string to a list of words
-			id_counter = int( cache.get('id_counter') )# identifiant pour la prochaine idée
-			if not idea['id']:
-				idea['id'] = id_counter
-				id_counter+=1
-				cache.incr('id_counter')
-
-			current_idea_id = idea['id']
-			idea['word'] = old_word
-			nodes = {'edges':[], 'newNodes':[], 'queryNode':idea}
-			for word in words_list:
-				nodes['edges'].append( {'to':id_counter, 'relevance':0.8} )
-				if 'depth' in idea:
-						nodes['newNodes'].append({'id':id_counter, 'parentId':current_idea_id, 'relevance':0.8, 'word':word, 'edges':[], 'depth':idea['depth']+1})
+		wiki_text = re.findall(r'<p>(.*)</p>', r.data)
+		wiki_text = ''.join(wiki_text)
+		wiki_word = {}
+		for match in re.findall(r'>(\w{3,20})</a>', wiki_text):
+			if match.lower() != idea['word']:
+				if match.lower() in wiki_word.keys():
+					wiki_word[match.lower()] += 1
 				else:
-					nodes['newNodes'].append({'id':id_counter, 'parentId':current_idea_id, 'relevance':0.8, 'word':word, 'edges':[], 'depth':1})
-				id_counter+=1
-				cache.incr('id_counter')
+					wiki_word[match.lower()] = 1
+		word_list = dict(sorted(wiki_word.iteritems(), key=operator.itemgetter(1), reverse=True)[:8]).keys()
+		id_counter = int( cache.get('id_counter') )# identifiant pour la prochaine idée
+		if not idea['id']:
+			idea['id'] = id_counter
+			id_counter += 1
+			cache.incr('id_counter')
+
+		current_idea_id = idea['id']
+		idea['word'] = old_word
+		nodes = {'edges':[], 'newNodes':[], 'queryNode':idea}
+		for word in word_list:
+			nodes['edges'].append( {'to':id_counter, 'relevance':0.8} )
+			if 'depth' in idea:
+					nodes['newNodes'].append({'id':id_counter, 'parentId':current_idea_id, 'relevance':0.8, 'word':word, 'edges':[], 'depth':idea['depth']+1})
+			else:
+				nodes['newNodes'].append({'id':id_counter, 'parentId':current_idea_id, 'relevance':0.8, 'word':word, 'edges':[], 'depth':1})
+			id_counter += 1
+			cache.incr('id_counter')
 
 		response = HttpResponse(json.dumps(nodes)) # encode les nouveaux noeuds en JSON
 		response["Access-Control-Allow-Origin"] = "*"
