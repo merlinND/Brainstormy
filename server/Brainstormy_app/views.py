@@ -1,23 +1,20 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*- 
-import json
-from django.shortcuts import render
 from django.http import HttpResponse
-import nltk
-import re
-from nltk.probability import FreqDist
+from django.core.cache import cache
+import urllib
+import json
+
+import nltk # TODO : vraiment utiliser NLTK...
+import nltk.data
 from nltk import ContextIndex
 from nltk import Text
-from itertools import islice
 from nltk.util import tokenwrap
-from django.core.cache import cache
-from django.core.cache import get_cache
-import nltk.data
-import urllib
+from nltk.probability import FreqDist
+
+import re
+from itertools import islice
 import operator
-from django.utils.html import strip_tags
-#from models import Brainstorming
-#from models import Idea
 
 cache.set('id_counter', 0, 30000)
 
