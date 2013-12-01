@@ -1,7 +1,7 @@
 var InputManager = {
 	HOST: "http://127.0.0.1:8000",
 	QUERY_URL: "query",
-	MAX_NODES_PER_QUERY: 10,
+	MAX_NODES_PER_QUERY: 5,
 
 	init: function(){
 		// TOOD : pendant les tests, on ne déclanche l'affichage du
@@ -50,8 +50,6 @@ var InputManager = {
 
 		console.log("On fait un envoi au serveur : " + JSON.stringify(query));
 		$("header h1").addClass("pulsing");
-
-		console.log(allRandomWords);
 
 		// TODO : envoyer le mot au serveur
 		$.ajax({

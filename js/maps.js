@@ -333,8 +333,6 @@ var ViewManager = {
             if (k >= 5000) {
                 //i = ViewManager.EDGES.length + 1;
                 window.clearInterval(theInterval);
-                console.log("Bonjour");
-
             }
         }, 10);
     },
@@ -345,28 +343,26 @@ var ViewManager = {
         this.map.panTo(e.latLng);
 
         // On déploie à partir de cette feuille,
-        // mais seulement si c'est est une
+        // mais seulement si c'en est une
         if (clickedNode.edges.length <= 0) {
             //console.log(ViewManager.EDGES);
-            InputManager.queryServerWithNode(clickedNode, GraphManager.extendGraph);
+            InputManager.queryServerWithNode(clickedNode, InputManager.extendGraphCallback);
             var circle = null;
             var label = null;
             //On recherche l'arrete entre le noeds cliqué et son parent
             for (var i = 0; i < ViewManager.EDGES.length; i++) {
 
-                if (ViewManager.EDGES[i][1] === clickedNode.id
-                        && ViewManager.EDGES[i][0] === clickedNode.parentId)
+                if (ViewManager.EDGES[i][1] === clickedNode.id &&
+                    ViewManager.EDGES[i][0] === clickedNode.parentId)
                 {
-                    console.log(ViewManager.EDGES);
                     var parent = GraphManager.theGraph.get(
                             ViewManager.EDGES[i][0]);
                     var enfant = GraphManager.theGraph.get(
                             ViewManager.EDGES[i][1]);
 
-
                     this.resizeEdge(parent, enfant, ViewManager.EDGES[i][2], 1, 50);
-                } else if (ViewManager.EDGES[i][0] === clickedNode.parentId) {
-
+                } else if (ViewManager.EDGES[i][0] === clickedNode.parentId)
+                {
                     var parent = GraphManager.theGraph.get(
                             ViewManager.EDGES[i][0]);
                     var enfant = GraphManager.theGraph.get(

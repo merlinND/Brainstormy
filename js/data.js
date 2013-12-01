@@ -144,6 +144,7 @@ var GraphManager = {
 	},
 
 	extendGraph: function(rootNode, newNodes){
+		
 		if (newNodes !== undefined && newNodes !== null && newNodes.length > 0) {
 			// On ajoute chacun des nouveaux noeuds au graphe
 			for(var i in newNodes){
