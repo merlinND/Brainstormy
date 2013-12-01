@@ -109,31 +109,32 @@ def query(request):
 		idea['word'] = idea['word'].lower()
 
 		# Récupération du lien wikipédia à partir du mot reçu
-		links = getgooglelinks(idea['word']+' wikipedia')
-		if len(links) > 0:
-			url = links[0]
+		google_links = getgooglelinks(idea['word']+' wikipedia')
+		if len(google_links) > 0:
+			url = google_links[0]
 			old_word = idea['word']
 
 			# Extraction de la page wikipédia
 			r = urllib.request.urlopen(url)
 			data = r.read()
 			if data is not None:
+				# Liste de mots souvent utilisés par Wikipédia mais qui n'ont pas beaucoup de sens
+				exclude_list = ['pmid', 'jstor', 'isbn', 'edit', 'help', 'pmc']
+
 				wiki_text = re.findall('<p>(.*)</p>', str(data))
 				wiki_text = ''.join(wiki_text)
 				
 				wiki_word = {}
 				for match in re.findall('>(\w{3,20})</a>', wiki_text):
-					if match.lower() != idea['word']:
-						if match.lower() in wiki_word.keys():
-							wiki_word[match.lower()] += 1
+					match = match.lower()
+					if match != idea['word'] and match not in exclude_list:
+						if match in wiki_word.keys():
+							wiki_word[match] += 1
 						else:
-							wiki_word[match.lower()] = 1
+							wiki_word[match] = 1
 
 				word_list = dict(sorted(wiki_word.items(), key=operator.itemgetter(1), reverse=True)[:max_ideas]).keys()
 				print(wiki_word.items())
-
-				# TODO : ajouter une liste de mots à ignorer (méta-données wikipédia)
-				# Ex : jstor, pmid, help, pmc, isbn...
 
 				id_counter = int( cache.get('id_counter') )# identifiant pour la prochaine idée
 				if not idea['id']:
@@ -158,6 +159,7 @@ def query(request):
 		else: # Aucun résultat Google
 			nodes = {'edges':[], 'newNodes':[], 'queryNode':idea}
 
+		print(nodes)
 		response = HttpResponse(json.dumps(nodes)) # encode les nouveaux noeuds en JSON
 		response["Access-Control-Allow-Origin"] = "*"
 		response["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS"
