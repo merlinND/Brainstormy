@@ -76,17 +76,16 @@ var InputManager = {
 
 	// Callback appelé lorsqu'on veut simplement étendre un graphe
 	extendGraphCallback: function(json) {
-		console.log("On étend le graphe grâce à un résultat de query.");
-
-		// On met à jour le noeud déclancheur avec les edges trouvées
-		var queryNode = GraphManager.theGraph.get(json.queryNode.id);
-		queryNode.edges = json.edges;
-
-		if (json.newNodes.length > 0)
+		if (json.newNodes.length > 0) {
+			console.log("On étend le graphe grâce à un résultat de query.");
+			// On met à jour le noeud déclancheur avec les edges trouvées
+			var queryNode = GraphManager.theGraph.get(json.queryNode.id);
+			queryNode.edges = json.edges;
 			GraphManager.extendGraph(queryNode, json.newNodes);
+		}
 		else {
-			console.log("Pas de nouveaux résultats à partir du noeud " + rootNode.word);
-			InputManager.showError("Aucun résultat pour le mot <strong>" + rootNode.word + "</strong>");
+			console.log("Pas de nouveaux résultats à partir du noeud " + json.queryNode.word);
+			InputManager.showError("Aucun résultat pour le mot <strong>" + json.queryNode.word + "</strong>");
 
 			InputManager.cleanDump();
 		}
