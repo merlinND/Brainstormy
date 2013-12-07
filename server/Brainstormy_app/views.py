@@ -119,7 +119,7 @@ def query(request):
 			data = r.read()
 			if data is not None:
 				# Liste de mots souvent utilisés par Wikipédia mais qui n'ont pas beaucoup de sens
-				exclude_list = ['pmid', 'jstor', 'isbn', 'edit', 'help', 'pmc']
+				exclude_list = ['pmid', 'jstor', 'isbn', 'edit', 'help', 'pmc', 'wikipedia', 'ibm', 'issn']
 
 				wiki_text = re.findall('<p>(.*)</p>', str(data))
 				wiki_text = ''.join(wiki_text)
