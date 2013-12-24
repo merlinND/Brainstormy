@@ -4,8 +4,6 @@ var InputManager = {
 	MAX_NODES_PER_QUERY: 5,
 
 	init: function(){
-		// TOOD : pendant les tests, on ne déclanche l'affichage du
-		// input que lors d'un clic sur le <h1>
 		$("header button").on("click", function(e){
 			e.stopPropagation();
 
@@ -13,6 +11,8 @@ var InputManager = {
 				InputManager.toggleInputForm();
 		});
 		$("#startingPoint").parent("form").on("submit", this.inputSubmit);
+
+		InputManager.toggleInputForm();
 
 		console.log(">> Input ready");
 	},

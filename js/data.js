@@ -94,8 +94,6 @@ var GraphManager = {
 	theGraph: GraphFactory.create(),
 
 	init: function(){
-		//this.theGraph = this.createSampleGraph();
-		console.log(">> Unicorns!");
 	},
 
 	/*
@@ -198,7 +196,6 @@ var GraphManager = {
  */
 $(document).ready(function(){
 	GraphManager.init();
-	GraphManager.theGraph = GraphManager.createSampleGraph();
 	GraphManager.displayAllGraph(GraphManager.theGraph);
 	//$("form").hide();
 });

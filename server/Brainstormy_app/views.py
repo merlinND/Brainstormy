@@ -141,7 +141,6 @@ def query(request):
 							wiki_word[match] = 1
 
 				word_list = dict(sorted(wiki_word.items(), key=operator.itemgetter(1), reverse=True)[:max_ideas]).keys()
-				print(wiki_word.items())
 
 				id_counter = int( cache.get('id_counter') )# identifiant pour la prochaine idée
 				if not idea['id']:
@@ -166,7 +165,6 @@ def query(request):
 		else: # Aucun résultat Google
 			nodes = {'edges':[], 'newNodes':[], 'queryNode':idea}
 
-		print(nodes)
 		response = HttpResponse(json.dumps(nodes)) # encode les nouveaux noeuds en JSON
 		response["Access-Control-Allow-Origin"] = "*"
 		response["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS"

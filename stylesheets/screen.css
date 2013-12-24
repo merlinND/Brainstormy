@@ -1,4 +1,5 @@
-/* line 17, ../../../../../../Applications/LiveReload.app/Contents/Resources/SASS.lrplugin/lib/compass/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+@charset "UTF-8";
+/* line 5, ../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.0.alpha.16/stylesheets/compass/reset/_utilities.scss */
 html, body, div, span, applet, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
 a, abbr, acronym, address, big, cite, code,
@@ -20,46 +21,46 @@ time, mark, audio, video {
   vertical-align: baseline;
 }
 
-/* line 22, ../../../../../../Applications/LiveReload.app/Contents/Resources/SASS.lrplugin/lib/compass/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+/* line 22, ../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.0.alpha.16/stylesheets/compass/reset/_utilities.scss */
 html {
   line-height: 1;
 }
 
-/* line 24, ../../../../../../Applications/LiveReload.app/Contents/Resources/SASS.lrplugin/lib/compass/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+/* line 24, ../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.0.alpha.16/stylesheets/compass/reset/_utilities.scss */
 ol, ul {
   list-style: none;
 }
 
-/* line 26, ../../../../../../Applications/LiveReload.app/Contents/Resources/SASS.lrplugin/lib/compass/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+/* line 26, ../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.0.alpha.16/stylesheets/compass/reset/_utilities.scss */
 table {
   border-collapse: collapse;
   border-spacing: 0;
 }
 
-/* line 28, ../../../../../../Applications/LiveReload.app/Contents/Resources/SASS.lrplugin/lib/compass/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+/* line 28, ../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.0.alpha.16/stylesheets/compass/reset/_utilities.scss */
 caption, th, td {
   text-align: left;
   font-weight: normal;
   vertical-align: middle;
 }
 
-/* line 30, ../../../../../../Applications/LiveReload.app/Contents/Resources/SASS.lrplugin/lib/compass/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+/* line 30, ../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.0.alpha.16/stylesheets/compass/reset/_utilities.scss */
 q, blockquote {
   quotes: none;
 }
-/* line 103, ../../../../../../Applications/LiveReload.app/Contents/Resources/SASS.lrplugin/lib/compass/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+/* line 103, ../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.0.alpha.16/stylesheets/compass/reset/_utilities.scss */
 q:before, q:after, blockquote:before, blockquote:after {
   content: "";
   content: none;
 }
 
-/* line 32, ../../../../../../Applications/LiveReload.app/Contents/Resources/SASS.lrplugin/lib/compass/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+/* line 32, ../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.0.alpha.16/stylesheets/compass/reset/_utilities.scss */
 a img {
   border: none;
 }
 
-/* line 116, ../../../../../../Applications/LiveReload.app/Contents/Resources/SASS.lrplugin/lib/compass/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
-article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section, summary {
+/* line 116, ../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.0.alpha.16/stylesheets/compass/reset/_utilities.scss */
+article, aside, details, figcaption, figure, footer, header, hgroup, main, menu, nav, section, summary {
   display: block;
 }
 
@@ -69,7 +70,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, 
 /*    COULEURS   */
 /* ************* */
 /*    GÉNÉRAL    */
-/* line 46, ../sass/screen.scss */
+/* line 45, ../sass/screen.scss */
 html, body {
   width: 100%;
   height: 100%;
@@ -77,44 +78,44 @@ html, body {
   min-height: 100%;
 }
 
-/* line 51, ../sass/screen.scss */
+/* line 50, ../sass/screen.scss */
 body {
   background-color: #2c3e50;
   font-size: 18px;
   font-family: "Lucida Grande", Helvetica, Arial, sans-serif;
   color: #27ae60;
 }
-/* line 59, ../sass/screen.scss */
+/* line 58, ../sass/screen.scss */
 body h1, body h2, body h3, body h4, body h5, body h6 {
   margin-bottom: 10px;
   color: #2ecc71;
 }
-/* line 65, ../sass/screen.scss */
+/* line 64, ../sass/screen.scss */
 body h1 {
   font-size: 3em;
 }
-/* line 68, ../sass/screen.scss */
+/* line 67, ../sass/screen.scss */
 body h1:hover {
   cursor: pointer;
 }
-/* line 73, ../sass/screen.scss */
+/* line 72, ../sass/screen.scss */
 body h2 {
   font-size: 2.5em;
 }
-/* line 77, ../sass/screen.scss */
+/* line 76, ../sass/screen.scss */
 body h3 {
   font-size: 1.7em;
 }
-/* line 81, ../sass/screen.scss */
+/* line 80, ../sass/screen.scss */
 body h4 {
   font-size: 1.5em;
 }
-/* line 85, ../sass/screen.scss */
+/* line 84, ../sass/screen.scss */
 body .clear {
   display: block;
   clear: both;
 }
-/* line 90, ../sass/screen.scss */
+/* line 89, ../sass/screen.scss */
 body .success {
   margin: 10px 0;
   color: #05af0d;
@@ -140,7 +141,6 @@ body .pulsing {
     opacity: 0.2;
   }
 }
-
 @-webkit-keyframes thePulse {
   /* line 102, ../sass/screen.scss */
   0%, 100% {
@@ -152,7 +152,6 @@ body .pulsing {
     opacity: 0.2;
   }
 }
-
 @-o-keyframes thePulse {
   /* line 102, ../sass/screen.scss */
   0%, 100% {
@@ -164,7 +163,6 @@ body .pulsing {
     opacity: 0.2;
   }
 }
-
 @-ms-keyframes thePulse {
   /* line 102, ../sass/screen.scss */
   0%, 100% {
@@ -176,7 +174,6 @@ body .pulsing {
     opacity: 0.2;
   }
 }
-
 @keyframes thePulse {
   /* line 102, ../sass/screen.scss */
   0%, 100% {
@@ -188,8 +185,7 @@ body .pulsing {
     opacity: 0.2;
   }
 }
-
-/* line 108, ../sass/screen.scss */
+/* line 107, ../sass/screen.scss */
 button {
   display: block;
   width: 50px;
@@ -202,14 +198,14 @@ button {
   color: #2c3e50;
   background-color: #27ae60;
 }
-/* line 121, ../sass/screen.scss */
+/* line 120, ../sass/screen.scss */
 button:hover {
   cursor: pointer;
 }
 
 /* ************* */
 /*    HEADER     */
-/* line 130, ../sass/screen.scss */
+/* line 129, ../sass/screen.scss */
 header {
   display: block;
   z-index: 100;
@@ -218,7 +214,7 @@ header {
   left: 0;
   right: 0;
 }
-/* line 137, ../sass/screen.scss */
+/* line 136, ../sass/screen.scss */
 header h1 {
   display: block;
   width: auto;
@@ -228,7 +224,7 @@ header h1 {
 
 /* ************* */
 /*    THE MAP    */
-/* line 149, ../sass/screen.scss */
+/* line 148, ../sass/screen.scss */
 #map-canvas {
   position: absolute;
   top: 0;
@@ -238,7 +234,7 @@ header h1 {
   z-index: 10;
 }
 
-/* line 155, ../sass/screen.scss */
+/* line 154, ../sass/screen.scss */
 #dump {
   display: block;
   position: absolute;
@@ -251,7 +247,7 @@ header h1 {
   color: #e67e22;
 }
 @media (max-width: 500px) {
-  /* line 155, ../sass/screen.scss */
+  /* line 154, ../sass/screen.scss */
   #dump {
     background-color: #e74c3c;
   }
@@ -259,7 +255,7 @@ header h1 {
 
 /* ************* */
 /*   USER INPUT  */
-/* line 175, ../sass/screen.scss */
+/* line 174, ../sass/screen.scss */
 form {
   display: none;
   position: absolute;
@@ -268,9 +264,9 @@ form {
   bottom: 0;
   right: 0;
   z-index: 500;
-  background-color: rgba(0, 0, 0, 0.8);
+  background-color: rgba(0, 0, 0, 0.6);
 }
-/* line 184, ../sass/screen.scss */
+/* line 183, ../sass/screen.scss */
 form input.word {
   display: block;
   width: 60%;
@@ -283,7 +279,7 @@ form input.word {
 
 /* ************* */
 /*    REPORT     */
-/* line 199, ../sass/screen.scss */
+/* line 198, ../sass/screen.scss */
 #report {
   display: block;
   position: absolute;
@@ -294,7 +290,7 @@ form input.word {
   z-index: 800;
   background-color: #2c3e50;
 }
-/* line 208, ../sass/screen.scss */
+/* line 207, ../sass/screen.scss */
 #report .container {
   position: relative;
   width: 80%;
@@ -302,7 +298,7 @@ form input.word {
   padding: 25px;
   background-color: #34495e;
 }
-/* line 215, ../sass/screen.scss */
+/* line 214, ../sass/screen.scss */
 #report .container button {
   position: absolute;
   width: 30px;
@@ -312,7 +308,7 @@ form input.word {
   right: 20px;
   color: #2c3e50;
 }
-/* line 224, ../sass/screen.scss */
+/* line 223, ../sass/screen.scss */
 #report .container .step {
   display: inline-block;
   width: auto;
@@ -322,7 +318,7 @@ form input.word {
   text-align: center;
   background-color: #d35400;
 }
-/* line 235, ../sass/screen.scss */
+/* line 234, ../sass/screen.scss */
 #report .container .step .nodeName {
   color: white;
   font-size: 42px;
