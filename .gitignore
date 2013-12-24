@@ -37,3 +37,5 @@ nosetests.xml
 
 # SASS
 .sass-cache*
+
+vadim_metadata/*

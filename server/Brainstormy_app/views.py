@@ -5,7 +5,8 @@ from django.core.cache import cache
 import urllib
 import json
 
-import nltk # TODO : vraiment utiliser NLTK...
+# TODO : vraiment utiliser NLTK...
+import nltk
 import nltk.data
 from nltk import ContextIndex
 from nltk import Text
@@ -18,7 +19,16 @@ import operator
 
 cache.set('id_counter', 0, 30000)
 
-def removeNonAscii(s):return "".join(i for i in s if ord(i)<128)
+# Liste de mots souvent utilisés par Wikipédia mais qui n'ont pas beaucoup de sens
+exclude_list = [
+	'pmid', 'jstor', 'isbn', 'edit', 'help',
+	'pmc', 'wikipedia', 'ibm', 'issn',
+	'bibcode', 'doi', 'metadata', 'mtnl', 'bsnl'
+]
+
+
+def removeNonAscii(s):
+	return "".join(i for i in s if ord(i)<128)
 
 def getgoogleurl(search,siteurl=False):
 	if siteurl==False:
@@ -118,9 +128,6 @@ def query(request):
 			r = urllib.request.urlopen(url)
 			data = r.read()
 			if data is not None:
-				# Liste de mots souvent utilisés par Wikipédia mais qui n'ont pas beaucoup de sens
-				exclude_list = ['pmid', 'jstor', 'isbn', 'edit', 'help', 'pmc', 'wikipedia', 'ibm', 'issn']
-
 				wiki_text = re.findall('<p>(.*)</p>', str(data))
 				wiki_text = ''.join(wiki_text)
 				
