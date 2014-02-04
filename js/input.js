@@ -11,8 +11,6 @@ var InputManager = {
 				InputManager.toggleInputForm();
 		});
 		$("#startingPoint").parent("form").on("submit", this.inputSubmit);
-
-		InputManager.toggleInputForm();
 	},
 
 	toggleInputForm: function() {
