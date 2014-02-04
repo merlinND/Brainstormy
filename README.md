@@ -11,7 +11,7 @@ By letting you explore related concepts freely in the form of an infinite graph,
 ![Brainstormy](images/example.png "Brainstormy")
 
 # Demo
-A demo is up [over there](http://vps.nimierdavid.fr/brainstormy/), try it out!
+A demo is up [over there](http://merlin.nimierdavid.fr/brainstormy/), try it out!
 
 # Usage
 

@@ -1,5 +1,5 @@
 var InputManager = {
-	HOST: "http://127.0.0.1:8000",
+	HOST: "http://merlin.nimierdavid.fr:8000/brainstormy/",
 	QUERY_URL: "query",
 	MAX_NODES_PER_QUERY: 5,
 
@@ -13,8 +13,6 @@ var InputManager = {
 				InputManager.toggleInputForm();
 		});
 		$("#startingPoint").parent("form").on("submit", this.inputSubmit);
-
-		console.log(">> Input ready");
 	},
 
 	toggleInputForm: function() {
@@ -48,10 +46,7 @@ var InputManager = {
 		if (callback === undefined)
 			callback = InputManager.newGraphCallback;
 
-		console.log("On fait un envoi au serveur : " + JSON.stringify(query));
 		$("header h1").addClass("pulsing");
-
-		// TODO : envoyer le mot au serveur
 		$.ajax({
 			url: this.HOST + '/' + this.QUERY_URL + "/",
 			type: 'GET',
@@ -63,9 +58,7 @@ var InputManager = {
 			},
 			error: function(json){
 				$("header h1").removeClass("pulsing");
-				console.log("Erreur pour charger la page : " + json.responseText);
-
-				InputManager.showError("Erreur serveur <strong>" + json.responseText + "</strong>");
+				InputManager.showError("Server error <strong>" + json.responseText + "</strong>");
 				InputManager.cleanDump();
 			}
 		});
@@ -77,24 +70,19 @@ var InputManager = {
 	// Callback appelé lorsqu'on veut simplement étendre un graphe
 	extendGraphCallback: function(json) {
 		if (json.newNodes.length > 0) {
-			console.log("On étend le graphe grâce à un résultat de query.");
 			// On met à jour le noeud déclancheur avec les edges trouvées
 			var queryNode = GraphManager.theGraph.get(json.queryNode.id);
 			queryNode.edges = json.edges;
 			GraphManager.extendGraph(queryNode, json.newNodes);
 		}
 		else {
-			console.log("Pas de nouveaux résultats à partir du noeud " + json.queryNode.word);
-			InputManager.showError("Aucun résultat pour le mot <strong>" + json.queryNode.word + "</strong>");
-
+			InputManager.showError("No result for word <strong>" + json.queryNode.word + "</strong>");
 			InputManager.cleanDump();
 		}
 	},
 
 	// Callback appelé lorsqu'on construit un nouveau graphe suite à une requête
 	newGraphCallback: function(json) {
-		console.log("Succès de la requête vers le serveur ! On crée un nouveau graphe.");
-		
 		// On calcule la position à laquelle on pourra loger notre nouveau graphe
 		var cozyPosition = ViewManager.getCozyPosition();
 

@@ -60,7 +60,6 @@ var ViewManager = {
 	deepestNodeLevel: 0,
 	init: function() {
 		this.initializeMap();
-		console.log(">> Maps ready");
 	},
 	/*********** Creating custom Map Type **************/
 
@@ -189,7 +188,6 @@ var ViewManager = {
 			angularOffset = ((2 * Math.PI) - maxAngle) / 2 - ancestorOffset;
 
 		var theta = ancestorOffset / Math.PI;
-		//console.log("Le heading de " + ancestorPosition + " à " + center + " est " + theta + " pi");
 
 		// On va décrire un grand cercle,
 		// et placer les marqueurs à intervalle régulier
