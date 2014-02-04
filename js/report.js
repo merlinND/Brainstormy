@@ -4,8 +4,6 @@ var ReportManager = {
 	init: function(){
 		$("header h1").on("click", ReportManager.summarizeBrainstorm);
 		$("#report #close").on("click", ReportManager.hideReport);
-
-		console.log(">> Report ready");
 	},
 
 	generateReportFromGraph: function(graph){
@@ -59,7 +57,6 @@ var ReportManager = {
 		});
 	},
 	hideReport: function(){
-		console.log("Closing");
 		$("#report").animate({
 			"top": -window.innerHeight,
 			"bottom": +window.innerHeight,

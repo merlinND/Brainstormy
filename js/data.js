@@ -27,10 +27,6 @@ var GraphFactory = {
 			root.parentId = null;
 			this.roots.push(root.id);
 			this.addNode(root);
-			console.log("On a ajouté la racine : ");
-			console.log(root);
-			console.log(" à la liste : ");
-			console.log(this.roots);
 			// Pour pouvoir faire des appels chaînés (à la jQuery)
 			return this;
 		};
@@ -158,10 +154,9 @@ var GraphManager = {
 			GraphManager.applyFunctionRecursively(ViewManager.drawNodesAround, rootNode, GraphManager.theGraph.get(rootNode.parentId), GraphManager.theGraph, rootNode.depth + 1);
 		}
 		else {
-			console.log("Pas de nouveaux résultats à partir du noeud " + rootNode.word);
 			if(rootNode.word === undefined)
 				rootNode.word = "choisi";
-			InputManager.showError("Aucun résultat pour le mot <strong>" + rootNode.word + "</strong>");
+			InputManager.showError("No result for word <strong>" + rootNode.word + "</strong>");
 
 			InputManager.cleanDump();
 		}
@@ -196,6 +191,9 @@ var GraphManager = {
  */
 $(document).ready(function(){
 	GraphManager.init();
-	GraphManager.displayAllGraph(GraphManager.theGraph);
+	
+	// Generate dummy data
+	//GraphManager.theGraph = GraphManager.createSampleGraph();
+	//GraphManager.displayAllGraph(GraphManager.theGraph);
 	//$("form").hide();
 });
