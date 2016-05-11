@@ -10,9 +10,6 @@ By letting you explore related concepts freely in the form of an infinite graph,
 
 ![Brainstormy](images/example.png "Brainstormy")
 
-# Demo
-A demo is up [over there](http://merlin.nimierdavid.fr/brainstormy/), try it out!
-
 # Usage
 
 1. Click on the large `+` button to start a new tree from any word of your choosing.
